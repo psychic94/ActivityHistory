@@ -32,11 +32,12 @@ public class ActivityHistory extends JavaPlugin{
         config = this.getConfig();
         vaultEnabled = (this.getServer().getPluginManager().getPlugin("Vault")) != null;
         debugMode = (String) config.getString("general.debugMode");
+        PlayerQueryCommandExecutor ahplayerExec = new PlayerQueryCommandExecutor(this);
         if(vaultEnabled)
             setupPermissions();
-        if(config.getBoolean("groups.enabled") || (config.getBoolean("players.enabled") && config.getBoolean("players.dataCollectionMethod")))
+        if(config.getBoolean("groups.enabled") || (config.getBoolean("players.enabled") && config.getString("players.dataCollectionMethod").equalsIgnoreCase("interval")))
             scheduleSurvey();
-        getCommand("ahplayer").setExecutor(new PlayerQueryCommandExecutor(this));
+        getCommand("ahplayer").setExecutor(ahplayerExec);
     }
     
     public FileConfiguration accessConfig(){
@@ -82,7 +83,7 @@ public class ActivityHistory extends JavaPlugin{
                 demogrphx.put(group, 0);
         }
         long time = (new Date()).getTime();
-        if(config.getBoolean("players.eneabled") && config.getString("players.dataCollectionMethod").equalsIgnoreCase("interval")){
+        if(config.getBoolean("players.enabled") && config.getString("players.dataCollectionMethod").equalsIgnoreCase("interval")){
             Player[] players = getServer().getOnlinePlayers();
             for(Player player : players){
                 if(vaultEnabled){
