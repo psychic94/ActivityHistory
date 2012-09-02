@@ -26,13 +26,17 @@ public class ActivityHistory extends JavaPlugin{
     private FileConfiguration config;
     public static boolean vaultEnabled;
     private String debugMode;
+    PlayerQueryCommandExecutor ahplayerExec;
     
     @Override
     public void onEnable(){
         config = this.getConfig();
         vaultEnabled = (this.getServer().getPluginManager().getPlugin("Vault")) != null;
         debugMode = (String) config.getString("general.debugMode");
-        PlayerQueryCommandExecutor ahplayerExec = new PlayerQueryCommandExecutor(this);
+        if(config.getString("players.dataCollectionMethod").equalsIgnoreCase("inverval"))
+            ahplayerExec = new IntervalFilePQCE(this);
+        else if(config.getString("players.dataCollectionMethod").equalsIgnoreCase("continual"))
+            ahplayerExec = new ContinualFilePQCE(this);
         if(vaultEnabled)
             setupPermissions();
         if(config.getBoolean("groups.enabled") || (config.getBoolean("players.enabled") && config.getString("players.dataCollectionMethod").equalsIgnoreCase("interval")))
