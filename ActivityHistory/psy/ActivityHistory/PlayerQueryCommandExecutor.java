@@ -1,15 +1,9 @@
 package psy.ActivityHistory;
 
 import java.util.Date;
-import java.io.File;
-import java.io.FileReader;
-import java.io.BufferedReader;
 import java.util.logging.Logger;
 import java.util.logging.Level;
-import java.io.IOException;
 
-import org.bukkit.plugin.Plugin;
-import org.bukkit.entity.Player;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
