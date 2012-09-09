@@ -23,25 +23,37 @@ import net.milkbowl.vault.permission.Permission;
 public class ActivityHistory extends JavaPlugin{
     private static final Logger logger = Logger.getLogger("Minecraft");
     public static Permission perms = null;
-    private FileConfiguration config;
+    public FileConfiguration config;
     public static boolean vaultEnabled;
     private String debugMode;
     PlayerQueryCommandExecutor ahplayerExec;
+    GroupQueryCommandExecutor ahgroupExec;
     
     @Override
     public void onEnable(){
         config = this.getConfig();
         vaultEnabled = (this.getServer().getPluginManager().getPlugin("Vault")) != null;
         debugMode = (String) config.getString("general.debugMode");
-        if(config.getString("players.dataCollectionMethod").equalsIgnoreCase("inverval"))
+        
+        if(config.getString("players.dataCollectionMethod").equalsIgnoreCase("interval"))
             ahplayerExec = new IntervalFilePQCE(this);
         else if(config.getString("players.dataCollectionMethod").equalsIgnoreCase("continual"))
             ahplayerExec = new ContinualFilePQCE(this);
+        else
+            ahplayerExec = new DisabledPQCE(this);
+            
         if(vaultEnabled)
             setupPermissions();
         if(config.getBoolean("groups.enabled") || (config.getBoolean("players.enabled") && config.getString("players.dataCollectionMethod").equalsIgnoreCase("interval")))
             scheduleSurvey();
+            
+        if(vaultEnabled && config.getBoolean("groups.enabled"))
+            ahgroupExec = new FileGQCE(this);
+        else
+            ahgroupExec = new DisabledGQCE(this);
+        
         getCommand("ahplayer").setExecutor(ahplayerExec);
+        getCommand("ahgroup").setExecutor(ahgroupExec);
     }
     
     public FileConfiguration accessConfig(){
