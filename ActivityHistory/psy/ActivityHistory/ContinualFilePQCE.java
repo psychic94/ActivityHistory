@@ -36,6 +36,7 @@ public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
             sender.sendMessage("Could not find the log file.");
             return true;
         }
+        // args: <player> <start>
         if(args.length == 2){
             try{
                 start = timeStringToDate(args[1]);
@@ -43,7 +44,9 @@ public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
                 sender.sendMessage("Error while parsing the start date. Use format MM/DD/YY-hh:mm:ss");
                 return true;
             }
-        }else if(args.length == 3 && args[1].equalsIgnoreCase("at")){
+        }
+        // args: <player> at <hour>
+        else if(args.length == 3 && args[1].equalsIgnoreCase("at")){
             try{
                 hour = new Integer(args[2]);
                 if(hour < 0 || hour > 23){
@@ -61,6 +64,7 @@ public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
                 sender.sendMessage("Error while parsing the start date. Use format MM/DD/YY-hh:mm:ss");
                 return true;
             }
+            // args: <player> <start> at <hour>
             if(args[2].equalsIgnoreCase("at")){
                 try{
                     hour = new Integer(args[3]);
@@ -72,7 +76,9 @@ public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
                     sender.sendMessage("Invalid hour number. Use an integer for 0 to 23");
                     return true;
                 }
-            }else{
+            }
+            // args: <player> <start> to <end>
+            else{
                 try{
                     end = timeStringToDate(args[3]);
                 }catch(Exception e){
@@ -80,7 +86,9 @@ public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
                     return true;
                 }
             }
-        }else if(args.length == 6){
+        }
+        // args: <player> <start> to <end> at <hour>
+        else if(args.length == 6){
             try{
                 start = timeStringToDate(args[1]);
             }catch(Exception e){
@@ -106,6 +114,32 @@ public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
         }else{
             return false;
         }
+        
+        TimeRange range = new TimeRange(start, end);
+        long time = 0;
+        Player player = null;
+        if(sender instanceof Player)
+            player = (Player) sender;
+        try{
+            String timestamp = filebr.readLine();
+            if(timestamp.equals(""))
+                timestamp = filebr.readLine();
+            while(timestamp != null){
+                TimeRange session = new TimeRange(timestamp);
+                time += range.overlap(session);
+                timestamp = filebr.readLine();
+                if(timestamp.equals(""))
+                    timestamp = filebr.readLine();
+            };
+         }catch(IOException e){
+            if(player != null)
+                player.sendMessage("An error occured while processing the logs.");
+            else
+                logger.log(Level.WARNING, "An error occured while processing the logs.");
+            return true;
+        }
+        sender.sendMessage("Activity percentage since " + start +":");
+        sender.sendMessage("" + ((double)time)/(range.length()) + "%");
         return true;
     }
     
