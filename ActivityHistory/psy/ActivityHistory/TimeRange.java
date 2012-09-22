@@ -46,4 +46,8 @@ public class TimeRange{
     public String toString(){
         return ("" + start.getTime() + "-" + end.getTime());
     }
+    //Not yet implemented
+    public long overlap(TimeRange other){
+        return 0;
+    }
 }
