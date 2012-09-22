@@ -45,7 +45,7 @@ public class IntervalFilePQCE extends PlayerQueryCommandExecutor{
                 return true;
             }
         }
-        // args: <player> <at> <hour>
+        // args: <player> at <hour>
         else if(args.length == 3 && args[1].equalsIgnoreCase("at")){
             try{
                 hour = new Integer(args[2]);
