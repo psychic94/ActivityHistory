@@ -2,7 +2,6 @@ package psy.ActivityHistory;
 
 import java.util.logging.Logger;
 import java.util.logging.Level;
-import java.util.HashMap;
 import java.util.Date;
 import java.io.File;
 import java.io.FileWriter;
@@ -84,61 +83,8 @@ public class ActivityHistory extends JavaPlugin{
         offset *= 60;
         offset -= time.getSeconds();
         offset *= 20;
-        this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable(){
-            public void run(){
-                survey();
-            }
-        }, offset, (15*60*20));
-    }
-    
-    public void survey(){
-        HashMap<String, Integer> demogrphx = new HashMap();
-        if(vaultEnabled && config.getBoolean("groups.enabled")){
-            String[] groups = perms.getGroups();
-            for(String group : groups)
-                demogrphx.put(group, 0);
-        }
-        long time = (new Date()).getTime();
-        if(config.getBoolean("players.enabled") && config.getString("players.dataCollectionMethod").equalsIgnoreCase("interval")){
-            Player[] players = getServer().getOnlinePlayers();
-            for(Player player : players){
-                if(vaultEnabled){
-                    String group = perms.getPrimaryGroup(player);
-                    demogrphx.put(group, demogrphx.remove(group) + 1);
-                }
-                try{
-                    String filename = (String) config.get("general.logFilesLocation");
-                    filename += "/" + player.getName().toLowerCase() + ".log";
-                    File log = new File(filename);
-                    FileWriter logw = new FileWriter(log, true);
-                    BufferedWriter logbw = new BufferedWriter(logw);
-                    logbw.write("" + time);
-                    logbw.newLine();
-                    logbw.flush();
-                }catch(Exception e){
-                    logException(e, player.getName());
-                }
-            }
-        }
-        if(vaultEnabled && config.getBoolean("groups.enabled")){
-            try{
-                String filename = (String) config.get("general.logFilesLocation");
-                filename += "/groups.log";
-                File log = new File(filename);
-                FileWriter logw = new FileWriter(log, true);
-                BufferedWriter logbw = new BufferedWriter(logw);
-                String message = "" + time + ": ";
-                String[] groups = perms.getGroups();
-                for(String group : groups){
-                    message +=  demogrphx.get(group) + " ";
-                    message += group + ", ";
-                }
-                logbw.newLine();
-                logbw.write(message);
-                logbw.flush();
-            }catch(Exception e){
-                logException(e, "groups");
-            }
+        if(config.getString("general.storageType").equals("file")){
+            this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new FileSurveyer(this), offset, (15*60*20));
         }
     }
 }
