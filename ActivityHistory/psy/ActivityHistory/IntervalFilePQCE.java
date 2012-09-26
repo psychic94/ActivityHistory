@@ -111,7 +111,9 @@ public class IntervalFilePQCE extends PlayerQueryCommandExecutor{
                 sender.sendMessage("Invalid hour number. Use an integer for 0 to 23");
                 return true;
             }
-        }else{
+        }
+        // no params
+        else if(args.length==0){
             return false;
         }
             
