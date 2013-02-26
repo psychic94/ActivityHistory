@@ -30,9 +30,15 @@ public class ActivityHistory extends JavaPlugin{
     
     @Override
     public void onEnable(){
+        saveDefaultConfig();
         config = this.getConfig();
         vaultEnabled = (this.getServer().getPluginManager().getPlugin("Vault")) != null;
         debugMode = (String) config.getString("general.debugMode");
+        
+        String logpath = config.getString("logFilesLocation");
+        if(logpath==null) logpath="plugins/ActivityHistory/logs";
+        File logfolder = new File(logpath);
+        if(!logfolder.exists()) logfolder.mkdir();
         
         if(config.getString("players.dataCollectionMethod").equalsIgnoreCase("interval"))
             ahplayerExec = new IntervalFilePQCE(this);
