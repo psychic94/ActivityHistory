@@ -16,6 +16,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.CommandException;
 
+import psy.util.TimeRange;
+
 public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
     private ActivityHistory plugin;
     private static final Logger logger = Logger.getLogger("Minecraft");
