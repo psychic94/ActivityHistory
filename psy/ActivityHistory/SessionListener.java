@@ -18,10 +18,13 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import psy.util.TimeRange;
 
 public class SessionListener implements Listener{
-    private HashMap<String, TimeRange> sessions = new HashMap();
+    private HashMap<String, TimeRange> sessions;
     private double minOffTime, minOnTime;
     ActivityHistory plugin;
+	
+	@SuppressWarnings("unchecked")
     public SessionListener(Plugin pl){
+		sessions = new HashMap();
         plugin = (ActivityHistory)pl;
         minOffTime = plugin.config.getDouble("players.minOffTime");
         minOnTime = plugin.config.getDouble("players.minOnTime");

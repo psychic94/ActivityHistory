@@ -14,6 +14,8 @@ public class FileSurveyer implements Runnable{
     public FileSurveyer(Plugin pl){
         plugin = (ActivityHistory) pl;
     }
+	
+	@SuppressWarnings("unchecked")
     public void run(){
         HashMap<String, Integer> demogrphx = new HashMap();
         if(ActivityHistory.vaultEnabled && plugin.accessConfig().getBoolean("groups.enabled")){

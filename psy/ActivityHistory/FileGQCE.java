@@ -26,6 +26,7 @@ public class FileGQCE extends GroupQueryCommandExecutor{
         plugin = (ActivityHistory) pl;
     }
     
+	@SuppressWarnings({"deprecation", "unchecked"})
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
         BufferedReader filebr = null;
         int hour = -1;
@@ -144,7 +145,7 @@ public class FileGQCE extends GroupQueryCommandExecutor{
         return new BufferedReader(filer);
     }
     
-    @SuppressWarnings("Deprecated")
+    @SuppressWarnings("deprecation")
     private Date timeStringToDate(String str) throws Exception{
         String[] str2 = str.split("-");
         String[] date = str2[0].split("/");

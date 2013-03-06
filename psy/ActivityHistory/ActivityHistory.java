@@ -78,6 +78,7 @@ public class ActivityHistory extends JavaPlugin{
             e.printStackTrace();
     }
     
+    @SuppressWarnings("deprecation")
     private void scheduleSurvey(){
         Date time = new Date();
         int minute = time.getMinutes();

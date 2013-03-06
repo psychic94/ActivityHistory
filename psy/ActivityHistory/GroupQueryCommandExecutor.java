@@ -15,7 +15,7 @@ public abstract class GroupQueryCommandExecutor implements CommandExecutor{
     
     public abstract boolean onCommand(CommandSender sender, Command cmd, String label, String[] args);
     
-    @SuppressWarnings("Deprecated")
+    @SuppressWarnings("deprecation")
     private Date timeStringToDate(String str) throws Exception{
         String[] str2 = str.split("-");
         String[] date = str2[0].split("/");

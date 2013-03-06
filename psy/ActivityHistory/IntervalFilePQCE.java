@@ -161,7 +161,8 @@ public class IntervalFilePQCE extends PlayerQueryCommandExecutor{
         FileReader filer = new FileReader(file);
         return new BufferedReader(filer);
     }
-    
+	
+    @SuppressWarnings("deprecation")
     private boolean matchesConditions(Date date, Date start, Date end, int hour){
         if(!date.before(end))
             return false;
@@ -172,7 +173,7 @@ public class IntervalFilePQCE extends PlayerQueryCommandExecutor{
         return true;
     }
     
-    @SuppressWarnings("Deprecated")
+    @SuppressWarnings("deprecation")
     private Date timeStringToDate(String str) throws Exception{
         String[] str2 = str.split("-");
         String[] date = str2[0].split("/");

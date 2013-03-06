@@ -152,6 +152,7 @@ public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
         return new BufferedReader(filer);
     }
     
+	@SuppressWarnings("deprecation")
     private boolean matchesConditions(Date date, Date start, Date end, int hour){
         if(!date.before(end))
             return false;
@@ -162,8 +163,8 @@ public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
         return true;
     }
     
-    @SuppressWarnings("Deprecated")
-    private Date timeStringToDate(String str) throws Exception{
+    @SuppressWarnings("deprecation")
+	private Date timeStringToDate(String str) throws Exception{
         String[] str2 = str.split("-");
         String[] date = str2[0].split("/");
         String[] time = str2[1].split(":");
