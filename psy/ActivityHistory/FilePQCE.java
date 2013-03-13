@@ -24,7 +24,7 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
     }
     
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
-        BufferedReader filebr = null;
+        PlayerLogFile file = null;
         int hour = -1;
         Date start = null;
         Date end = new Date();
@@ -33,10 +33,12 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
             return false;
         }
         try{
-            filebr = loadLogFile(args[0]);
+            file = loadLogFile(args[0]);
         }catch(FileNotFoundException e){
             sender.sendMessage("Could not find the log file.");
             return true;
+        }catch(IOException e){
+            sender.sendMessage("An error occurred when loading the log file.");
         }
         
         //Number parsing
@@ -132,55 +134,13 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
         Player player = null;
         if(sender instanceof Player)
             player = (Player) sender;
-        try{
-            String timestamp = filebr.readLine();
-            if(timestamp.equals(""))
-                timestamp = filebr.readLine();
-            if(start == null)
-                start = new Date(new Long(timestamp));
-            while(timestamp != null){
-                Date date = new Date(new Long(timestamp));
-                if(matchesConditions(date, start, end, hour))
-                    times++;
-                timestamp = filebr.readLine();
-                if(timestamp.equals(""))
-                    timestamp = filebr.readLine();
-            };
-         }catch(IOException e){
-            if(player != null)
-                player.sendMessage("An error occured while processing the logs.");
-            else
-                logger.log(Level.WARNING, "An error occured while processing the logs.");
-            return true;
-        }
-        long startLong = new Long(start.getTime());
-        long dateLong = new Long((new Date()).getTime());
-        long timeDiff = dateLong - startLong;
-        timeDiff /= 1000;
-        timeDiff /= 60;
-        if(hour != -1)
-            timeDiff /= 24;
-        times *= 1500;
-        sender.sendMessage("Activity percentage since " + start +":");
-        sender.sendMessage("" + ((double)times)/timeDiff + "%");
+        sender.sendMessage(file.tallyActivityPercent(start, end, hour));
         return true;
     }
     
-    private BufferedReader loadLogFile(String name)throws FileNotFoundException{
+    private PlayerLogFile loadLogFile(String name)throws FileNotFoundException, IOException{
         String filename = plugin.accessConfig().getString("general.logFilesLocation") + "/" + name.toLowerCase() + ".log";
-        File file = new File(filename);
-        FileReader filer = new FileReader(file);
-        return new BufferedReader(filer);
-    }
-    
-    @SuppressWarnings("deprecation")
-    private boolean matchesConditions(Date date, Date start, Date end, int hour){
-        if(!date.before(end))
-            return false;
-        if(start != null && !date.after(start))
-            return false;
-        if(hour != -1 && date.getHours() != hour)
-            return false;
-        return true;
+        PlayerLogFile file = new PlayerLogFile(filename);
+        return file;
     }
 }

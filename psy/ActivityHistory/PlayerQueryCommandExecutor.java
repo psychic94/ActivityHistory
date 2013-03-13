@@ -16,7 +16,7 @@ public abstract class PlayerQueryCommandExecutor implements CommandExecutor{
     public abstract boolean onCommand(CommandSender sender, Command cmd, String label, String[] args);
     
     @SuppressWarnings("deprecation")
-    protected Date timeStringToDate(String str) throws Exception{
+    protected Date timeStringToDate(String str){
         String[] str2 = str.split("-");
         String[] date = str2[0].split("/");
         String[] time = str2[1].split(":");
