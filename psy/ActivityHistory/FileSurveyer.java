@@ -24,12 +24,13 @@ public class FileSurveyer implements Runnable{
                 demogrphx.put(group, 0);
         }
         long time = (new Date()).getTime();
-        if(plugin.accessConfig().getBoolean("players.enabled") && plugin.accessConfig().getString("players.dataCollectionMethod").equalsIgnoreCase("interval")){
+        if(plugin.accessConfig().getBoolean("players.enabled")){
             Player[] players = plugin.getServer().getOnlinePlayers();
             for(Player player : players){
                 if(ActivityHistory.vaultEnabled){
                     String group = ActivityHistory.perms.getPrimaryGroup(player);
-                    demogrphx.put(group, demogrphx.remove(group) + 1);
+                    int temp = demogrphx.remove(group);
+                    demogrphx.put(group, temp + 1);
                 }
                 try{
                     String filename = (String) plugin.accessConfig().get("general.logFilesLocation");

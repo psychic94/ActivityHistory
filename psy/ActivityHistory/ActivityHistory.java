@@ -40,10 +40,8 @@ public class ActivityHistory extends JavaPlugin{
         File logfolder = new File(logpath);
         if(!logfolder.exists()) logfolder.mkdir();
         
-        if(config.getString("players.dataCollectionMethod").equalsIgnoreCase("interval"))
-            ahplayerExec = new IntervalFilePQCE(this);
-        else if(config.getString("players.dataCollectionMethod").equalsIgnoreCase("continual"))
-            ahplayerExec = new ContinualFilePQCE(this);
+        if(config.getBoolean("players.enabled"))
+            ahplayerExec = new FilePQCE(this);
         else
             ahplayerExec = new DisabledPQCE(this);
             

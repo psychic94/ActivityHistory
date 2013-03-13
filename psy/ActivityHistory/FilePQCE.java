@@ -16,12 +16,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.CommandException;
 
-import psy.util.TimeRange;
-
-public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
+public class FilePQCE extends PlayerQueryCommandExecutor{
     private ActivityHistory plugin;
     private static final Logger logger = Logger.getLogger("Minecraft");
-    public ContinualFilePQCE(Plugin pl){
+    public FilePQCE(Plugin pl){
         plugin = (ActivityHistory)pl;
     }
     
@@ -30,16 +28,24 @@ public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
         int hour = -1;
         Date start = null;
         Date end = new Date();
-        if(args.length < 1)
+        if(args.length < 1){
+            sender.sendMessage("no params");
             return false;
+        }
         try{
             filebr = loadLogFile(args[0]);
         }catch(FileNotFoundException e){
             sender.sendMessage("Could not find the log file.");
             return true;
         }
+        
+        //Number parsing
+        if(args.length == 1){
+            sender.sendMessage("1 param");
+        }
         // args: <player> <start>
-        if(args.length == 2){
+        else if(args.length == 2){
+            sender.sendMessage("2 params");
             try{
                 start = timeStringToDate(args[1]);
             }catch(Exception e){
@@ -49,6 +55,7 @@ public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
         }
         // args: <player> at <hour>
         else if(args.length == 3 && args[1].equalsIgnoreCase("at")){
+            sender.sendMessage("3 params");
             try{
                 hour = new Integer(args[2]);
                 if(hour < 0 || hour > 23){
@@ -60,6 +67,7 @@ public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
                 return true;
             }
         }else if(args.length == 4){
+            sender.sendMessage("4 params");
             try{
                 start = timeStringToDate(args[1]);
             }catch(Exception e){
@@ -91,6 +99,7 @@ public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
         }
         // args: <player> <start> to <end> at <hour>
         else if(args.length == 6){
+            sender.sendMessage("6 params");
             try{
                 start = timeStringToDate(args[1]);
             }catch(Exception e){
@@ -113,12 +122,13 @@ public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
                 sender.sendMessage("Invalid hour number. Use an integer for 0 to 23");
                 return true;
             }
-        }else{
+        }
+        // no params
+        else{
             return false;
         }
-        
-        TimeRange range = new TimeRange(start, end);
-        long time = 0;
+            
+        int times = 0;
         Player player = null;
         if(sender instanceof Player)
             player = (Player) sender;
@@ -126,9 +136,12 @@ public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
             String timestamp = filebr.readLine();
             if(timestamp.equals(""))
                 timestamp = filebr.readLine();
+            if(start == null)
+                start = new Date(new Long(timestamp));
             while(timestamp != null){
-                TimeRange session = new TimeRange(timestamp);
-                time += range.overlap(session);
+                Date date = new Date(new Long(timestamp));
+                if(matchesConditions(date, start, end, hour))
+                    times++;
                 timestamp = filebr.readLine();
                 if(timestamp.equals(""))
                     timestamp = filebr.readLine();
@@ -140,8 +153,16 @@ public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
                 logger.log(Level.WARNING, "An error occured while processing the logs.");
             return true;
         }
+        long startLong = new Long(start.getTime());
+        long dateLong = new Long((new Date()).getTime());
+        long timeDiff = dateLong - startLong;
+        timeDiff /= 1000;
+        timeDiff /= 60;
+        if(hour != -1)
+            timeDiff /= 24;
+        times *= 1500;
         sender.sendMessage("Activity percentage since " + start +":");
-        sender.sendMessage("" + ((double)time)/(range.length()) + "%");
+        sender.sendMessage("" + ((double)times)/timeDiff + "%");
         return true;
     }
     
@@ -152,7 +173,7 @@ public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
         return new BufferedReader(filer);
     }
     
-	@SuppressWarnings("deprecation")
+    @SuppressWarnings("deprecation")
     private boolean matchesConditions(Date date, Date start, Date end, int hour){
         if(!date.before(end))
             return false;
@@ -161,21 +182,5 @@ public class ContinualFilePQCE extends PlayerQueryCommandExecutor{
         if(hour != -1 && date.getHours() != hour)
             return false;
         return true;
-    }
-    
-    @SuppressWarnings("deprecation")
-	private Date timeStringToDate(String str) throws Exception{
-        String[] str2 = str.split("-");
-        String[] date = str2[0].split("/");
-        String[] time = str2[1].split(":");
-        Integer[] ints = {
-            new Integer(date[2]) + 100,
-            new Integer(date[0]) - 1,
-            new Integer(date[1]),
-            new Integer(time[0]),
-            new Integer(time[1]),
-            new Integer(time[2]),
-        };
-        return new Date(ints[0], ints[1], ints[2], ints[3], ints[4], ints[5]);
     }
 }
