@@ -30,7 +30,8 @@ public class PlayerLogFile extends File{
         bw2 = new BufferedWriter(new FileWriter(this, false));
     }
     
-    private void loadSessions(){
+    //Returns true if loading successful, false if an error was caught
+    private boolean loadSessions(){
         while(true){
             String line;
             try{
@@ -55,10 +56,11 @@ public class PlayerLogFile extends File{
             sessions.put(date, len);
         }
         //Save any invalid data that was detected and fixed when loading
-        saveSessions();
+        return saveSessions();
     }
     
-    private void saveSessions(){
+    //Returns true if saving was successful, false if an error was caught
+    private boolean saveSessions(){
         for(Date key : sessions.keySet()){
             try{
                 bw2.write(key.getTime() + "," + sessions.get(key));
@@ -69,10 +71,25 @@ public class PlayerLogFile extends File{
         }
         try{
             bw2.flush();
+            return true;
         }catch(IOException e){
+            return false;
         }catch(NullPointerException e){
+            return false;
         }
         
+    }
+    
+    //Returns true if addition was successful, false if an error was caught
+    public boolean addSession(long time, int len){
+        try{
+            bw1.write("" + time + "," + len);
+            bw1.newLine();
+            bw1.flush();
+        }catch(IOException e){
+            return false;
+        }
+        return true;
     }
     
     public String tallyActivityPercent(Date start, Date end, int hour){

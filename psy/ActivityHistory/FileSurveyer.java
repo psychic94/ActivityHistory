@@ -14,39 +14,32 @@ public class FileSurveyer implements Runnable{
     public FileSurveyer(Plugin pl){
         plugin = (ActivityHistory) pl;
     }
-	
-	@SuppressWarnings("unchecked")
+    
+    @SuppressWarnings("unchecked")
     public void run(){
         HashMap<String, Integer> demogrphx = new HashMap();
-        if(ActivityHistory.vaultEnabled && plugin.accessConfig().getBoolean("groups.enabled")){
-            String[] groups = ActivityHistory.perms.getGroups();
-            for(String group : groups)
-                demogrphx.put(group, 0);
-        }
         long time = (new Date()).getTime();
+        Player[] players = plugin.getServer().getOnlinePlayers();
         if(plugin.accessConfig().getBoolean("players.enabled")){
-            Player[] players = plugin.getServer().getOnlinePlayers();
             for(Player player : players){
-                if(ActivityHistory.vaultEnabled){
-                    String group = ActivityHistory.perms.getPrimaryGroup(player);
-                    int temp = demogrphx.remove(group);
-                    demogrphx.put(group, temp + 1);
-                }
                 try{
                     String filename = (String) plugin.accessConfig().get("general.logFilesLocation");
                     filename += "/" + player.getName().toLowerCase() + ".log";
-                    File log = new File(filename);
-                    FileWriter logw = new FileWriter(log, true);
-                    BufferedWriter logbw = new BufferedWriter(logw);
-                    logbw.write("" + time);
-                    logbw.newLine();
-                    logbw.flush();
+                    PlayerLogFile log = new PlayerLogFile(filename);
+                    log.addSession(time, plugin.accessConfig().getInt("player.surveyInterval"));
                 }catch(Exception e){
                     plugin.logException(e, player.getName());
                 }
             }
         }
         if(ActivityHistory.vaultEnabled && plugin.accessConfig().getBoolean("groups.enabled")){
+            String[] groups = ActivityHistory.perms.getGroups();
+            for(String group : groups)
+                demogrphx.put(group, 0);
+            for(Player player : players){
+                String group = ActivityHistory.perms.getPrimaryGroup(player);
+                demogrphx.put(group, demogrphx.remove(group) + 1);
+            }
             try{
                 String filename = (String) plugin.accessConfig().get("general.logFilesLocation");
                 filename += "/groups.log";
@@ -54,7 +47,7 @@ public class FileSurveyer implements Runnable{
                 FileWriter logw = new FileWriter(log, true);
                 BufferedWriter logbw = new BufferedWriter(logw);
                 String message = "" + time + ": ";
-                String[] groups = ActivityHistory.perms.getGroups();
+                groups = ActivityHistory.perms.getGroups();
                 for(String group : groups){
                     message +=  demogrphx.get(group) + " ";
                     message += group + ", ";
