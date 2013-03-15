@@ -20,6 +20,7 @@ public class PlayerLogFile extends File{
     //This writer overwrites
     BufferedWriter bw2;
     
+    @SuppressWarnings("unchecked")
     public PlayerLogFile(String pathname) throws FileNotFoundException, IOException{
         super(pathname);
         sessions = new HashMap();
@@ -35,6 +36,8 @@ public class PlayerLogFile extends File{
             try{
                 line = br.readLine();
             }catch(IOException e){
+                break;
+            }catch(NullPointerException e){
                 break;
             }
             if(line==null) break;
@@ -66,7 +69,10 @@ public class PlayerLogFile extends File{
         }
         try{
             bw2.flush();
-        }catch(IOException e){}
+        }catch(IOException e){
+        }catch(NullPointerException e){
+        }
+        
     }
     
     public String tallyActivityPercent(Date start, Date end, int hour){
