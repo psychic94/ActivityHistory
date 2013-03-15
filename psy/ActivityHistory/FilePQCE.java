@@ -43,11 +43,9 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
         
         //Number parsing
         if(args.length == 1){
-            sender.sendMessage("1 param");
         }
         // args: <player> <start>
         else if(args.length == 2){
-            sender.sendMessage("2 params");
             try{
                 start = timeStringToDate(args[1]);
             }catch(Exception e){
@@ -57,7 +55,6 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
         }
         // args: <player> at <hour>
         else if(args.length == 3 && args[1].equalsIgnoreCase("at")){
-            sender.sendMessage("3 params");
             try{
                 hour = new Integer(args[2]);
                 if(hour < 0 || hour > 23){
@@ -69,7 +66,6 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
                 return true;
             }
         }else if(args.length == 4){
-            sender.sendMessage("4 params");
             try{
                 start = timeStringToDate(args[1]);
             }catch(Exception e){
@@ -101,7 +97,6 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
         }
         // args: <player> <start> to <end> at <hour>
         else if(args.length == 6){
-            sender.sendMessage("6 params");
             try{
                 start = timeStringToDate(args[1]);
             }catch(Exception e){
