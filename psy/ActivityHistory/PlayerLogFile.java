@@ -93,12 +93,13 @@ public class PlayerLogFile extends File{
     }
     
     public String tallyActivityPercent(Date start, Date end, int hour){
-        if(start==null) start = (Date) sessions.keySet().toArray()[0];
-        int time = 0;
+        long time = -1;
         for(Date date : sessions.keySet()){
+            if(time==-1) time = date.getTime();
             if(matchesConditions(date, start, end, hour))
                 time+=sessions.get(date);
         }
+        if(time == -1) return "There is no record of that player.";
         long startLong = new Long(start.getTime());
         long dateLong = new Long((new Date()).getTime());
         long timeDiff = dateLong - startLong;
