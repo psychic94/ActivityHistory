@@ -26,7 +26,7 @@ public class FileSurveyer implements Runnable{
                     String filename = (String) plugin.accessConfig().get("general.logFilesLocation");
                     filename += "/" + player.getName().toLowerCase() + ".log";
                     PlayerLogFile log = new PlayerLogFile(filename);
-                    log.addSession(time, plugin.accessConfig().getInt("player.surveyInterval"));
+                    log.addSession(time, plugin.accessConfig().getInt("general.surveyInterval"));
                 }catch(Exception e){
                     plugin.logException(e, player.getName());
                 }

@@ -9,31 +9,29 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Date;
+import java.util.Stack;
+import java.util.EmptyStackException;
 
 import psy.util.TimeRange;
 
-public class PlayerLogFile extends File{
-    HashMap<Date, Integer> sessions;
-    BufferedReader br;
-    //This writer appends
-    BufferedWriter bw1;
-    //This writer overwrites
-    BufferedWriter bw2;
+public class PlayerLogFile{
+    private HashMap<Date, Integer> sessions;
+    private Date firstSession;
+    private File file;
     
     @SuppressWarnings("unchecked")
-    public PlayerLogFile(String pathname) throws FileNotFoundException, IOException{
-        super(pathname);
+    public PlayerLogFile(String pathname){
+        file = new File(pathname);
         sessions = new HashMap();
+        firstSession = null;
         loadSessions();
-        br = new BufferedReader(new FileReader(this));
-        bw1 = new BufferedWriter(new FileWriter(this, true));
-        bw2 = new BufferedWriter(new FileWriter(this, false));
     }
     
     //Returns true if loading successful, false if an error was caught
     private boolean loadSessions(){
+        BufferedReader br = reader();
         while(true){
-            String line;
+            String line = new String();
             try{
                 line = br.readLine();
             }catch(IOException e){
@@ -43,7 +41,7 @@ public class PlayerLogFile extends File{
             }
             if(line==null) break;
             else if (line.trim().equals("")) continue;
-            String[] data = line.split(",");
+            String[] data = line.split(":");
             Date date;
             Integer len;
             try{
@@ -53,39 +51,61 @@ public class PlayerLogFile extends File{
             }catch(NumberFormatException e){
                 continue;
             }
+            if(firstSession == null) firstSession = date;
             sessions.put(date, len);
         }
-        //Save any invalid data that was detected and fixed when loading
+        //Save any changes made when fixing invalid data
         return saveSessions();
     }
     
     //Returns true if saving was successful, false if an error was caught
+    @SuppressWarnings("unchecked")
     private boolean saveSessions(){
+        BufferedWriter bw = writer(false);
+        //By default, the dates are sorted most recent first.
+        //Flip the list using a stack
+        Stack<Date> keys = new Stack();
         for(Date key : sessions.keySet()){
+            keys.push(key);
+        }
+        //Write the stack
+        while(true){
+            Date key;
             try{
-                bw2.write(key.getTime() + "," + sessions.get(key));
-                bw2.newLine();
+                key = keys.pop();
+            }catch(EmptyStackException e){
+                break;
+            }
+            try{
+                bw.write(key.getTime() + ":" + sessions.get(key));
+                bw.newLine();
             }catch(IOException e){
                 continue;
             }
         }
         try{
-            bw2.flush();
-            return true;
+            bw.flush();
         }catch(IOException e){
             return false;
         }catch(NullPointerException e){
             return false;
         }
-        
+        try{
+            bw.close();
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
     
     //Returns true if addition was successful, false if an error was caught
     public boolean addSession(long time, int len){
+        BufferedWriter bw = writer(true);
         try{
-            bw1.write("" + time + "," + len);
-            bw1.newLine();
-            bw1.flush();
+            bw.write("" + time + ":" + len);
+            bw.newLine();
+            bw.flush();
         }catch(IOException e){
             return false;
         }
@@ -93,9 +113,9 @@ public class PlayerLogFile extends File{
     }
     
     public String tallyActivityPercent(Date start, Date end, int hour){
-        long time = -1;
+        if(start == null) start = firstSession;
+        long time = 0;
         for(Date date : sessions.keySet()){
-            if(time==-1) time = date.getTime();
             if(matchesConditions(date, start, end, hour))
                 time+=sessions.get(date);
         }
@@ -107,14 +127,34 @@ public class PlayerLogFile extends File{
         timeDiff /= 60;
         if(hour != -1)
             timeDiff /= 24;
+        System.out.println(time + "/" + timeDiff);
+        time *= 100;
         return "" + ((double)time)/timeDiff + "%";
+    }
+    
+    private BufferedReader reader(){
+        try{
+            return new BufferedReader(new FileReader(file));
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    private BufferedWriter writer(boolean append){
+        try{
+            return new BufferedWriter(new FileWriter(file, append));
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
     
     @SuppressWarnings("deprecation")
     private boolean matchesConditions(Date date, Date start, Date end, int hour){
         if(!date.before(end))
             return false;
-        if(start != null && !date.after(start))
+        if(start != null && !date.after(start) && !date.equals(start))
             return false;
         if(hour != -1 && date.getHours() != hour)
             return false;
