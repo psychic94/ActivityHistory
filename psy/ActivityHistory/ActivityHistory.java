@@ -47,7 +47,7 @@ public class ActivityHistory extends JavaPlugin{
             
         if(vaultEnabled)
             setupPermissions();
-        if(config.getBoolean("groups.enabled") || (config.getBoolean("players.enabled") && config.getString("players.dataCollectionMethod").equalsIgnoreCase("interval")))
+        if(config.getBoolean("groups.enabled") || config.getBoolean("players.enabled"))
             scheduleSurvey();
             
         if(vaultEnabled && config.getBoolean("groups.enabled"))
@@ -81,15 +81,17 @@ public class ActivityHistory extends JavaPlugin{
         Date time = new Date();
         int minute = time.getMinutes();
         int offset = 0;
+        int interval = accessConfig().getInt("general.surveyInterval");
+        //Set initial delay to the amount of time until the time is divisible by interval
         do{
             minute++;
             offset++;
-        }while(minute%15 != 0);
+        }while(minute%interval != 0);
         offset *= 60;
         offset -= time.getSeconds();
         offset *= 20;
         if(config.getString("general.storageType").equals("file")){
-            this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new FileSurveyer(this), offset, (15*60*20));
+            this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new FileSurveyer(this), offset, (interval*60*20));
         }
     }
 }
