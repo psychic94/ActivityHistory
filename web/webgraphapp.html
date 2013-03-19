@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Activity History Web Graph</title>
+</head>
+<body>
+<!--<script src="applet_handler.js" />-->
+<form>
+Name<input type="text" rows="1" cols="25" maxlength="25" placeholder="Player Name" width="25em" required></input>
+<br>
+Graph Type
+<input type="radio" name="graphtype" value="trend" checked>Daily Activity Trend</input>
+<input type="radio" name="graphtype" value="percent">Hourly Activity Percent</input>
+<br>
+Start (DD/MM/YY-hh:mm:ss)
+<input type="text" rows="1" cols="17" maxlength="17" placeholder="First Appearance" width="17em"></input>
+<br>
+End (DD/MM/YY-hh:mm:ss)
+<input type="text" rows="1" cols="17" maxlength="17" placeholder="Current Date/Time" width="17em"></input>
+</form>
+<img id="output" name="output" alt="No output image generated yet">
+</body>
+</html>
