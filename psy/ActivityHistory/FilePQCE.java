@@ -4,8 +4,6 @@ import java.util.Date;
 import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
-import java.util.logging.Logger;
-import java.util.logging.Level;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
@@ -18,7 +16,6 @@ import org.bukkit.command.CommandException;
 
 public class FilePQCE extends PlayerQueryCommandExecutor{
     private ActivityHistory plugin;
-    private static final Logger logger = Logger.getLogger("Minecraft");
     public FilePQCE(Plugin pl){
         plugin = (ActivityHistory)pl;
     }
