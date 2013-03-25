@@ -127,7 +127,6 @@ public class PlayerLogFile{
         timeDiff /= 60;
         if(hour != -1)
             timeDiff /= 24;
-        System.out.println(time + "/" + timeDiff);
         time *= 100;
         return "" + ((double)time)/timeDiff + "%";
     }

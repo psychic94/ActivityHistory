@@ -26,7 +26,6 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
         Date start = null;
         Date end = new Date();
         if(args.length < 1){
-            sender.sendMessage("no params");
             return false;
         }
         try{
