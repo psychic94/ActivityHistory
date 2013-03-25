@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.BufferedReader;
+import java.sql.SQLException;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -27,6 +28,7 @@ public class ActivityHistory extends JavaPlugin{
     private String debugMode;
     PlayerQueryCommandExecutor ahplayerExec;
     GroupQueryCommandExecutor ahgroupExec;
+    public static DatabaseManager dbm;
     
     @Override
     public void onEnable(){
@@ -40,9 +42,16 @@ public class ActivityHistory extends JavaPlugin{
         File logfolder = new File(logpath);
         if(!logfolder.exists()) logfolder.mkdir();
         
-        if(config.getBoolean("players.enabled"))
-            ahplayerExec = new FilePQCE(this);
-        else
+        if(config.getBoolean("players.enabled")){
+            if(config.getString("general.storageType").equalsIgnoreCase("file"))
+                ahplayerExec = new FilePQCE(this);
+            else if(config.getString("general.storageType").equalsIgnoreCase("sql"))
+                try{    
+                    dbm = new DatabaseManager(this);
+                }catch(SQLException e){
+                    logger.log(Level.SEVERE, "Could not connect to database");
+                }
+        }else
             ahplayerExec = new DisabledPQCE(this);
             
         if(vaultEnabled)
