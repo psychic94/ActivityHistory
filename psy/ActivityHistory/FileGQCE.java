@@ -25,22 +25,29 @@ public class FileGQCE extends GroupQueryCommandExecutor{
     public FileGQCE(Plugin pl){
         plugin = (ActivityHistory) pl;
     }
-    
-	@SuppressWarnings({"deprecation", "unchecked"})
+
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
+        if(args.length < 1)
+            return false;
+        else if(args[0].equalsIgnoreCase("staffdist"))
+            return staffDist(sender, cmd, label, args);
+        else
+            return false;
+    }
+
+    @SuppressWarnings({"deprecation", "unchecked"})
+    private boolean staffDist(CommandSender sender, Command cmd, String label, String[] args){
         BufferedReader filebr = null;
         int hour = -1;
         Date start = null;
         Date end = new Date();
-        if(args.length < 1 || !args[0].equalsIgnoreCase("staffdist"))
-            return false;
         try{
             filebr = loadLogFile("groups");
         }catch(FileNotFoundException e){
             sender.sendMessage("Could not find the log file.");
             return true;
         }
-        
+
         // args: staffdist <start>
         if(args.length == 2){
             try{
@@ -67,14 +74,14 @@ public class FileGQCE extends GroupQueryCommandExecutor{
         }else{
             return false;
         }
-        
+
         TimeRange range = new TimeRange(start, end);
         double[] pcnt = new double[24];
         int[] denom = new int[24];
         Player player = null;
         if(sender instanceof Player)
             player = (Player) sender;
-            
+
         try{
             String line = filebr.readLine();
             while(line != null){
@@ -136,15 +143,15 @@ public class FileGQCE extends GroupQueryCommandExecutor{
         }
         sender.sendMessage("Staff peak is " + num + "% at " + hour + ".");
         return true;
-    }
-    
+        }
+
     private BufferedReader loadLogFile(String name)throws FileNotFoundException{
         String filename = plugin.accessConfig().getString("general.logFilesLocation") + "/" + name.toLowerCase() + ".log";
         File file = new File(filename);
         FileReader filer = new FileReader(file);
         return new BufferedReader(filer);
     }
-    
+
     @SuppressWarnings("deprecation")
     private Date timeStringToDate(String str) throws Exception{
         String[] str2 = str.split("-");
