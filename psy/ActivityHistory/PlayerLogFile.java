@@ -119,7 +119,7 @@ public class PlayerLogFile{
             if(matchesConditions(date, start, end, hour))
                 time+=sessions.get(date);
         }
-        if(time == -1) return "There is no record of that player.";
+        if(time == -1 || start == null) return "There is no record of that player.";
         long startLong = new Long(start.getTime());
         long dateLong = new Long((new Date()).getTime());
         long timeDiff = dateLong - startLong;
