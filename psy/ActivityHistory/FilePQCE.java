@@ -21,13 +21,14 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
     }
     
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
+        if(args.length < 2){
+            return false;
+        }
+        String mode = args[1].toLowerCase();
         PlayerLogFile file = null;
         int hour = -1;
         Date start = null;
         Date end = new Date();
-        if(args.length < 1){
-            return false;
-        }
         try{
             file = loadLogFile(args[0]);
         }catch(FileNotFoundException e){
@@ -38,21 +39,21 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
         }
         
         //Number parsing
-        if(args.length == 1){
+        if(args.length == 2){
         }
-        // args: <player> <start>
-        else if(args.length == 2){
+        // args: <player> <prcnt|dist> <start>
+        else if(args.length == 3){
             try{
-                start = timeStringToDate(args[1]);
+                start = timeStringToDate(args[2]);
             }catch(Exception e){
                 sender.sendMessage("Error while parsing the start date. Use format MM/DD/YY-hh:mm:ss");
                 return true;
             }
         }
-        // args: <player> at <hour>
-        else if(args.length == 3 && args[1].equalsIgnoreCase("at")){
+        // args: <player> <prcnt> at <hour>
+        else if(mode.equals("prcnt") && args.length == 4 && args[2].equalsIgnoreCase("at")){
             try{
-                hour = new Integer(args[2]);
+                hour = new Integer(args[3]);
                 if(hour < 0 || hour > 23){
                     sender.sendMessage("Invalid hour number. Use an integer for 0 to 23");
                     return true;
@@ -61,17 +62,17 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
                 sender.sendMessage("Invalid hour number. Use an integer for 0 to 23");
                 return true;
             }
-        }else if(args.length == 4){
+        }else if(args.length == 6){
             try{
-                start = timeStringToDate(args[1]);
+                start = timeStringToDate(args[2]);
             }catch(Exception e){
                 sender.sendMessage("Error while parsing the start date. Use format MM/DD/YY-hh:mm:ss");
                 return true;
             }
-            // args: <player> <start> at <hour>
-            if(args[2].equalsIgnoreCase("at")){
+            // args: <player> <prcnt> <start> at <hour>
+            if(mode.equals("prcnt") && args[3].equalsIgnoreCase("at")){
                 try{
-                    hour = new Integer(args[3]);
+                    hour = new Integer(args[4]);
                     if(hour < 0 || hour > 23){
                         sender.sendMessage("Invalid hour number. Use an integer for 0 to 23");
                         return true;
@@ -81,32 +82,32 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
                     return true;
                 }
             }
-            // args: <player> <start> to <end>
+            // args: <player> <prcnt|dist> <start> to <end>
             else{
                 try{
-                    end = timeStringToDate(args[3]);
+                    end = timeStringToDate(args[4]);
                 }catch(Exception e){
                     sender.sendMessage("Error while parsing the end date. Use format MM/DD/YY-hh:mm:ss");
                     return true;
                 }
             }
         }
-        // args: <player> <start> to <end> at <hour>
-        else if(args.length == 6){
+        // args: <player> <prcnt> <start> to <end> at <hour>
+        else if(args.length == 7 && mode.equals("prcnt"){
             try{
-                start = timeStringToDate(args[1]);
+                start = timeStringToDate(args[2]);
             }catch(Exception e){
                 sender.sendMessage("Error while parsing the start date. Use format MM/DD/YY-hh:mm:ss");
                 return true;
             }
             try{
-                end = timeStringToDate(args[3]);
+                end = timeStringToDate(args[4]);
             }catch(Exception e){
                 sender.sendMessage("Error while parsing the end date. Use format MM/DD/YY-hh:mm:ss");
                 return true;
             }
             try{
-                hour = new Integer(args[5]);
+                hour = new Integer(args[6]);
                 if(hour < 0 || hour > 23){
                     sender.sendMessage("Invalid hour number. Use an integer for 0 to 23");
                     return true;
@@ -125,7 +126,14 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
         Player player = null;
         if(sender instanceof Player)
             player = (Player) sender;
-        sender.sendMessage(file.tallyActivityPercent(start, end, hour));
+        if(mode.equals("prcnt")
+            sender.sendMessage(file.tallyActivityPercent(start, end, hour)+"%");
+        else if(mode.equals("dist"){
+            String[] data = new String[24];
+            for(int i=0; i<24; i++){
+                data[i] = file.tallyActivityPercent(start, end, i);
+            }
+        }
         return true;
     }
     
