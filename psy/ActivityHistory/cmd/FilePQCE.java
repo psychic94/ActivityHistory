@@ -1,4 +1,4 @@
-package psy.ActivityHistory;
+package psy.ActivityHistory.cmd;
 
 import java.util.Date;
 import java.io.File;
@@ -10,9 +10,9 @@ import java.io.FileNotFoundException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.entity.Player;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.CommandException;
+import psy.ActivityHistory.ActivityHistory;
+import psy.ActivityHistory.PlayerLogFile;
 
 public class FilePQCE extends PlayerQueryCommandExecutor{
     private ActivityHistory plugin;
@@ -93,7 +93,7 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
             }
         }
         // args: <player> <prcnt> <start> to <end> at <hour>
-        else if(args.length == 7 && mode.equals("prcnt"){
+        else if(args.length == 7 && mode.equals("prcnt")){
             try{
                 start = timeStringToDate(args[2]);
             }catch(Exception e){
@@ -126,9 +126,9 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
         Player player = null;
         if(sender instanceof Player)
             player = (Player) sender;
-        if(mode.equals("prcnt")
+        if(mode.equals("prcnt"))
             sender.sendMessage(file.tallyActivityPercent(start, end, hour)+"%");
-        else if(mode.equals("dist"){
+        else if(mode.equals("dist")){
             String[] data = new String[24];
             for(int i=0; i<24; i++){
                 data[i] = file.tallyActivityPercent(start, end, i);

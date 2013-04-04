@@ -1,13 +1,12 @@
-package psy.ActivityHistory;
+package psy.ActivityHistory.cmd;
 
 import java.util.Date;
 import java.util.logging.Logger;
-import java.util.logging.Level;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.CommandException;
+import psy.ActivityHistory.ActivityHistory;
 
 public abstract class GroupQueryCommandExecutor implements CommandExecutor{
     private ActivityHistory plugin;
