@@ -112,15 +112,29 @@ public class PlayerLogFile{
         return true;
     }
     
-    public String tallyActivityPercent(Date start, Date end, int hour){
-        if(start == null) start = firstSession;
-        long time = 0;
+    @SuppressWarnings("deprecation")
+    public String tallyActivityTotal(TimeRange range, int hour){
+        if(range.getStart() == null) range.setStart(firstSession);
+        int time = 0;
         for(Date date : sessions.keySet()){
-            if(matchesConditions(date, start, end, hour))
+            if(range.includes(date) && (hour == -1 || date.getHours() == hour))
                 time+=sessions.get(date);
         }
-        if(time == -1 || start == null) return "There is no record of that player.";
-        long startLong = new Long(start.getTime());
+        if(time == -1 || range.getStart() == null) return "There is no record of that player.";
+        int hours = time / 60, minutes = time % 60;
+        return "" + hours + "hours" + minutes + "minutes";
+    }
+    
+    @SuppressWarnings("deprecation")
+    public String tallyActivityPercent(TimeRange range, int hour){
+        if(range.getStart() == null) range.setStart(firstSession);
+        int time = 0;
+        for(Date date : sessions.keySet()){
+            if(range.includes(date) && (hour == -1 || date.getHours() == hour))
+                time+=sessions.get(date);
+        }
+        if(time == -1 || range.getStart() == null) return "There is no record of that player.";
+        long startLong = new Long(range.getStart().getTime());
         long dateLong = new Long((new Date()).getTime());
         long timeDiff = dateLong - startLong;
         timeDiff /= 1000;
