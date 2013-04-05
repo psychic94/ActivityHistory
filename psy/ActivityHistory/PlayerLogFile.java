@@ -22,6 +22,10 @@ public class PlayerLogFile{
     @SuppressWarnings("unchecked")
     public PlayerLogFile(String pathname){
         file = new File(pathname);
+        try{
+            file.createNewFile();
+        }catch(Exception e){
+        }
         sessions = new HashMap();
         firstSession = null;
         loadSessions();
