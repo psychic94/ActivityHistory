@@ -65,8 +65,9 @@ public class ActivityHistory extends JavaPlugin{
         else
             ahgroupExec = new DisabledGQCE(this);
         
-        getCommand("ahplayer").setExecutor(ahplayerExec);
-        getCommand("ahgroup").setExecutor(ahgroupExec);
+        getCommand("ppercent").setExecutor(ahplayerExec);
+        getCommand("ptotal").setExecutor(ahplayerExec);
+        getCommand("phours").setExecutor(ahplayerExec);
     }
     
     public FileConfiguration accessConfig(){
@@ -79,6 +80,7 @@ public class ActivityHistory extends JavaPlugin{
         return perms != null;
     }
     
+    @Deprecated
     public void logException(Exception e, String logFile){
         if(debugMode.equalsIgnoreCase("basic"))
             logger.log(Level.WARNING, "Error while updating log file for " + logFile + ".");

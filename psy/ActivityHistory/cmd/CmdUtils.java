@@ -40,6 +40,30 @@ public class CmdUtils{
         return new TimeRange(start, end);
     }
     
+    public static Integer parseHour(CommandSender sender, String[] args){
+        // args: <player> <start> at <hour>
+        if(args.length == 4 && args[2].equalsIgnoreCase("at")){
+            try{
+                return (new Integer(args[3]) - 1);
+            }catch(NumberFormatException e){
+                sender.sendMessage("Invalid hour. Use an integer between 1 and 24 inclusive.");
+                return null;
+            }
+        }
+        // args: <player> <start> <end> at <hour>
+        if(args.length == 5 && args[3].equalsIgnoreCase("at")){
+            try{
+                return (new Integer(args[4]) - 1);
+            }catch(NumberFormatException e){
+                sender.sendMessage("Invalid hour. Use an integer between 1 and 24 inclusive.");
+                return null;
+            }
+        }
+        else{
+            return -1;
+        }
+    }
+    
     @SuppressWarnings("deprecation")
     protected static Date timeStringToDate(String str){
         Date now = new Date();

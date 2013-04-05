@@ -13,6 +13,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import psy.ActivityHistory.ActivityHistory;
 import psy.ActivityHistory.PlayerLogFile;
+import psy.util.TimeRange;
 
 public class FilePQCE extends PlayerQueryCommandExecutor{
     private ActivityHistory plugin;
@@ -25,10 +26,7 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
             return false;
         }
         
-        String mode;
-        
         PlayerLogFile file = null;
-        
         try{
             file = loadLogFile(args[0]);
         }catch(FileNotFoundException e){
@@ -39,22 +37,40 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
             return true;
         }
             
-        int times = 0;
         Player player = null;
         if(sender instanceof Player)
             player = (Player) sender;
-        if(mode.equals("prcnt"))
-            sender.sendMessage(file.tallyActivityPercent(start, end, hour));
-        else if(mode.equals("dist")){
-            String[] data = new String[24];
+            
+        String mode = cmd.getName();
+        TimeRange range = CmdUtils.parseRange(sender, args);
+        if(range==null) return true;
+        if(mode.equalsIgnoreCase("ppercent")){
+            Integer hour = CmdUtils.parseHour(sender, args);
+            if(hour==null) return true;
+            double percent = file.tallyActivityPercent(range, hour);
+            if(percent<=0) sender.sendMessage("There is no record of that player.");
+            else sender.sendMessage("" + percent + "%");
+        }else if(mode.equalsIgnoreCase("ptotal")){
+            sender.sendMessage(file.tallyActivityTotal(range));
+        }else if(mode.equalsIgnoreCase("phours")){
+            double[] data = new double[24];
+            String message = "";
+            //Note: This is a temporary implementation. In the future it will draw a graph.
             for(int i=0; i<24; i++){
-                data[i] = file.tallyActivityPercent(start, end, i);
+                data[i] = file.tallyActivityPercent(range, i);
+                if(data[i]<=0){
+                    sender.sendMessage("There is no record of that player.");
+                    return true;
+                }else{
+                    message += "" + i + ":00- " + data[i] + "%   ";
+                }
             }
+            sender.sendMessage(message);
         }
         return true;
     }
     
-    private PlayerLogFile loadLogFile(String name)throws FileNotFoundException, IOException{
+    private PlayerLogFile loadLogFile(String name)throws IOException{
         String filename = plugin.accessConfig().getString("general.logFilesLocation") + "/" + name.toLowerCase() + ".log";
         PlayerLogFile file = new PlayerLogFile(filename);
         return file;

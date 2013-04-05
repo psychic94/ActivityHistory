@@ -117,12 +117,11 @@ public class PlayerLogFile{
     }
     
     @SuppressWarnings("deprecation")
-    public String tallyActivityTotal(TimeRange range, int hour){
+    public String tallyActivityTotal(TimeRange range){
         if(range.getStart() == null) range.setStart(firstSession);
         int time = 0;
         for(Date date : sessions.keySet()){
-            if(range.includes(date) && (hour == -1 || date.getHours() == hour))
-                time+=sessions.get(date);
+            time+=sessions.get(date);
         }
         if(time == -1 || range.getStart() == null) return "There is no record of that player.";
         int hours = time / 60, minutes = time % 60;
@@ -130,14 +129,14 @@ public class PlayerLogFile{
     }
     
     @SuppressWarnings("deprecation")
-    public String tallyActivityPercent(TimeRange range, int hour){
+    public double tallyActivityPercent(TimeRange range, int hour){
         if(range.getStart() == null) range.setStart(firstSession);
         int time = 0;
         for(Date date : sessions.keySet()){
             if(range.includes(date) && (hour == -1 || date.getHours() == hour))
                 time+=sessions.get(date);
         }
-        if(time == -1 || range.getStart() == null) return "There is no record of that player.";
+        if(time == -1 || range.getStart() == null) return -1;
         long startLong = new Long(range.getStart().getTime());
         long dateLong = new Long((new Date()).getTime());
         long timeDiff = dateLong - startLong;
@@ -146,7 +145,7 @@ public class PlayerLogFile{
         if(hour != -1)
             timeDiff /= 24;
         time *= 100;
-        return "" + ((double)time)/timeDiff + "%";
+        return ((double)time)/timeDiff;
     }
     
     private BufferedReader reader(){
