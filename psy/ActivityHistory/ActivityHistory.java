@@ -80,7 +80,6 @@ public class ActivityHistory extends JavaPlugin{
         return perms != null;
     }
     
-    @Deprecated
     public void logException(Exception e, String logFile){
         if(debugMode.equalsIgnoreCase("basic"))
             logger.log(Level.WARNING, "Error while updating log file for " + logFile + ".");
