@@ -121,7 +121,8 @@ public class PlayerLogFile{
         if(range.getStart() == null) range.setStart(firstSession);
         int time = 0;
         for(Date date : sessions.keySet()){
-            time+=sessions.get(date);
+            if(range.includes(date) || range.getStart().equals(firstSession))
+                time+=sessions.get(date);
         }
         if(time == -1 || range.getStart() == null) return "There is no record of that player.";
         int hours = time / 60, minutes = time % 60;
@@ -133,7 +134,7 @@ public class PlayerLogFile{
         if(range.getStart() == null) range.setStart(firstSession);
         int time = 0;
         for(Date date : sessions.keySet()){
-            if(range.includes(date) && (hour == -1 || date.getHours() == hour))
+            if((range.includes(date) || range.getStart().equals(firstSession)) && (hour == -1 || date.getHours() == hour))
                 time+=sessions.get(date);
         }
         if(time == -1 || range.getStart() == null) return -1;
@@ -145,7 +146,11 @@ public class PlayerLogFile{
         if(hour != -1)
             timeDiff /= 24;
         time *= 100;
-        return ((double)time)/timeDiff;
+        double percent = ((double)time)/timeDiff;
+        percent *= 100;
+        percent = Math.round(percent);
+        percent /= 100;
+        return percent;
     }
     
     private BufferedReader reader(){

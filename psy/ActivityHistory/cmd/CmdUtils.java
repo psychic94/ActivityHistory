@@ -10,8 +10,10 @@ public class CmdUtils{
         Date start = null;
         Date end = new Date();
         
+        if(args.length == 1){
+        }
         // args: <player> <start>
-        if(args.length == 2){
+        else if(args.length == 2){
             try{
                 start = timeStringToDate(args[1]);
             }catch(Exception e){
