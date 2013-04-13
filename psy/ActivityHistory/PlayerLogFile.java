@@ -29,6 +29,7 @@ public class PlayerLogFile{
         sessions = new HashMap();
         firstSession = null;
         loadSessions();
+        firstSession = getFirstSession();
     }
     
     //Returns true if loading successful, false if an error was caught
@@ -55,7 +56,6 @@ public class PlayerLogFile{
             }catch(NumberFormatException e){
                 continue;
             }
-            if(firstSession == null) firstSession = date;
             sessions.put(date, len);
         }
         //Save any changes made when fixing invalid data
@@ -180,5 +180,13 @@ public class PlayerLogFile{
         if(hour != -1 && date.getHours() != hour)
             return false;
         return true;
+    }
+    
+    private Date getFirstSession(){
+        Date first = new Date();
+        for(Date date : sessions.keySet())
+            if(date.before(first))
+                first = date;
+        return first;
     }
 }
