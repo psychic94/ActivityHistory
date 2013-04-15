@@ -1,9 +1,6 @@
 package psy.ActivityHistory.cmd;
 
 import java.util.Date;
-import java.io.File;
-import java.io.FileReader;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
@@ -54,18 +51,13 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
             sender.sendMessage(file.tallyActivityTotal(range));
         }else if(mode.equalsIgnoreCase("phours")){
             double[] data = new double[24];
-            String message = "";
-            //Note: This is a temporary implementation. In the future it will draw a graph.
+            String[] messages = {"", "", "", ""};
             for(int i=0; i<24; i++){
                 data[i] = file.tallyActivityPercent(range, i);
-                if(data[i]<=0){
-                    sender.sendMessage("There is no record of that player.");
-                    return true;
-                }else{
-                    message += "" + i + ":00- " + data[i] + "%   ";
-                }
+                messages[i/6] += "" + i + ":00- " + data[i] + "%   ";
             }
-            sender.sendMessage(message);
+            for(String message : messages)
+                sender.sendMessage(message);
         }
         return true;
     }
