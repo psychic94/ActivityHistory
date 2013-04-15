@@ -66,20 +66,7 @@ public class PlayerLogFile{
     @SuppressWarnings("unchecked")
     private boolean saveSessions(){
         BufferedWriter bw = writer(false);
-        //By default, the dates are sorted most recent first.
-        //Flip the list using a stack
-        Stack<Date> keys = new Stack();
         for(Date key : sessions.keySet()){
-            keys.push(key);
-        }
-        //Write the stack
-        while(true){
-            Date key;
-            try{
-                key = keys.pop();
-            }catch(EmptyStackException e){
-                break;
-            }
             try{
                 bw.write(key.getTime() + ":" + sessions.get(key));
                 bw.newLine();
