@@ -35,7 +35,12 @@ public class TimeRange{
     }
     
     public boolean includes(Date date){
-        return (date.before(end) && date.after(start));
+        if(start==null)
+            return date.before(end);
+        else if(end==null)
+            return date.after(start);
+        else
+            return (date.before(end) && date.after(start));
     }
     
     public long length(){
