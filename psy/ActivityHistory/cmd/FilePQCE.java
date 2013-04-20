@@ -27,10 +27,10 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
         try{
             file = loadLogFile(args[0]);
         }catch(FileNotFoundException e){
-            sender.sendMessage("Could not find the log file.");
+            sender.sendMessage(ActivityHistory.messages.getString("errors.fileNotFound"));
             return true;
         }catch(IOException e){
-            sender.sendMessage("An error occurred when loading the log file.");
+            sender.sendMessage(ActivityHistory.messages.getString("errors.fileLoad"));
             return true;
         }
             
@@ -39,13 +39,13 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
             player = (Player) sender;
             
         String mode = cmd.getName();
-        TimeRange range = CmdUtils.parseRange(sender, args);
+        TimeRange range = CmdUtils.parseRange(sender, args, 1);
         if(range==null) return true;
         if(mode.equalsIgnoreCase("ppercent")){
-            Integer hour = CmdUtils.parseHour(sender, args);
+            Integer hour = CmdUtils.parseHour(sender, args, 1);
             if(hour==null) return true;
             double percent = file.tallyActivityPercent(range, hour);
-            if(percent<=0) sender.sendMessage("There is no record of that player.");
+            if(percent<=0) sender.sendMessage(ActivityHistory.messages.getString("errors.playerNotFound"));
             else sender.sendMessage("" + percent + "%");
         }else if(mode.equalsIgnoreCase("ptotal")){
             sender.sendMessage(file.tallyActivityTotal(range));

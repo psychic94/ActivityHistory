@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.sql.SQLException;
 
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,6 +17,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.entity.Player;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import psy.ActivityHistory.cmd.*;
 
 import net.milkbowl.vault.Vault;
@@ -30,6 +32,7 @@ public class ActivityHistory extends JavaPlugin{
     PlayerQueryCommandExecutor ahplayerExec;
     GroupQueryCommandExecutor ahgroupExec;
     public static DatabaseManager dbm;
+    public static YamlConfiguration messages;
     
     @Override
     public void onEnable(){
@@ -37,6 +40,11 @@ public class ActivityHistory extends JavaPlugin{
         config = this.getConfig();
         vaultEnabled = (this.getServer().getPluginManager().getPlugin("Vault")) != null;
         debugMode = (String) config.getString("general.debugMode");
+        
+        //Load the localization of messages
+        InputStream stream = getResource(config.getString("general.language").toLowerCase() + ".yml");
+        if (stream != null)
+            messages = YamlConfiguration.loadConfiguration(stream);
         
         String logpath = config.getString("logFilesLocation");
         if(logpath==null) logpath="plugins/ActivityHistory/logs";

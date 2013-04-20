@@ -2,37 +2,41 @@ package psy.ActivityHistory.cmd;
 
 import java.util.Date;
 import psy.util.TimeRange;
+import psy.ActivityHistory.ActivityHistory;
 
 import org.bukkit.command.CommandSender;
 
 public class CmdUtils{
-    public static TimeRange parseRange(CommandSender sender, String[] args){
+    /**Iterprets the arguments from the command to determine the range to search
+     * @param offset The number of arguments to skip
+    */
+    public static TimeRange parseRange(CommandSender sender, String[] args, int offset){
         Date start = null;
         Date end = new Date();
         
-        if(args.length == 1){
+        if(args.length <= (0+offset)){
         }
-        // args: <player> <start>
-        else if(args.length == 2){
+        // args: <start>
+        else if(args.length == (1+offset)){
             try{
                 start = timeStringToDate(args[1]);
             }catch(Exception e){
-                sender.sendMessage("Error while parsing the start date. Use format MM/DD/YY-hh:mm:ss");
+                sender.sendMessage(ActivityHistory.messages.getString("errors.firstDate"));
                 return null;
             }
         }
-        // args: <player> <start> <end>
-        else if(args.length == 3){
+        // args: <start> <end>
+        else if(args.length == (2+offset)){
             try{
                 start = timeStringToDate(args[1]);
             }catch(Exception e){
-                sender.sendMessage("Error while parsing the start date. Use format MM/DD/YY-hh:mm:ss");
+                sender.sendMessage(ActivityHistory.messages.getString("errors.firstDate"));
                 return null;
             }
             try{
                 end = timeStringToDate(args[4]);
             }catch(Exception e){
-                sender.sendMessage("Error while parsing the end date. Use format MM/DD/YY-hh:mm:ss");
+                sender.sendMessage(ActivityHistory.messages.getString("errors.secondDate"));
                 return null;
             }
         }
@@ -42,13 +46,17 @@ public class CmdUtils{
         return new TimeRange(start, end);
     }
     
-    public static Integer parseHour(CommandSender sender, String[] args){
+    
+    /**Iterprets the arguments from the command to determine the time of day to search
+     * @param offset The number of arguments to skip
+    */
+    public static Integer parseHour(CommandSender sender, String[] args, int offset){
         // args: <player> <start> at <hour>
         if(args.length == 4 && args[2].equalsIgnoreCase("at")){
             try{
                 return (new Integer(args[3]) - 1);
             }catch(NumberFormatException e){
-                sender.sendMessage("Invalid hour. Use an integer between 1 and 24 inclusive.");
+                sender.sendMessage(ActivityHistory.messages.getString("errors.invalidHour"));
                 return null;
             }
         }
@@ -57,7 +65,7 @@ public class CmdUtils{
             try{
                 return (new Integer(args[4]) - 1);
             }catch(NumberFormatException e){
-                sender.sendMessage("Invalid hour. Use an integer between 1 and 24 inclusive.");
+                sender.sendMessage(ActivityHistory.messages.getString("errors.invalidHour"));
                 return null;
             }
         }
@@ -67,6 +75,9 @@ public class CmdUtils{
     }
     
     @SuppressWarnings("deprecation")
+    /**Translates the format used in the command arguements into java.util.Date
+     * @param str The string to be translated
+    */
     protected static Date timeStringToDate(String str){
         Date now = new Date();
         Integer day = 1, month = now.getMonth(), year = now.getYear();
