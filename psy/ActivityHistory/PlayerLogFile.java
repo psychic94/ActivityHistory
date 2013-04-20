@@ -103,6 +103,14 @@ public class PlayerLogFile{
         return true;
     }
     
+    //Returns true if removal was successful, false if an error was caught
+    public boolean removeSessions(TimeRange range){
+        for(Date date : sessions.keySet())
+            if(range.includes(date))
+                sessions.remove(date);
+        return saveSessions();
+    }
+    
     @SuppressWarnings("deprecation")
     public String tallyActivityTotal(TimeRange range){
         if(range.getStart() == null) range.setStart(firstSession);
