@@ -19,9 +19,12 @@ public class PlayerLogFile{
     private Date firstSession;
     private File file;
     
-    @SuppressWarnings("unchecked")
     public PlayerLogFile(String pathname){
-        file = new File(pathname);
+        this(new File(pathname));
+    }
+    
+    @SuppressWarnings("unchecked")
+    public PlayerLogFile(File file){
         try{
             file.createNewFile();
         }catch(Exception e){
