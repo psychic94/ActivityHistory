@@ -29,8 +29,8 @@ public class ActivityHistory extends JavaPlugin{
     public FileConfiguration config;
     public static boolean vaultEnabled;
     private String debugMode;
-    PlayerQueryCommandExecutor ahplayerExec;
-    GroupQueryCommandExecutor ahgroupExec;
+    PlayerQueryCommandExecutor playerExec;
+    GroupQueryCommandExecutor groupExec;
     public static DatabaseManager dbm;
     public static YamlConfiguration messages;
     
@@ -53,15 +53,18 @@ public class ActivityHistory extends JavaPlugin{
         
         if(config.getBoolean("players.enabled")){
             if(config.getString("general.storageType").equalsIgnoreCase("file"))
-                ahplayerExec = new FilePQCE(this);
+                playerExec = new FilePQCE(this);
             else if(config.getString("general.storageType").equalsIgnoreCase("sql"))
                 try{    
                     dbm = new DatabaseManager(this);
+                    playerExec = new DatabasePQCE(this);
                 }catch(SQLException e){
-                    logger.log(Level.SEVERE, "Could not connect to database");
+                    logger.log(Level.SEVERE, messages.getString("errors.dbConnect"));
+                    dbm = null;
+                    playerExec = new DisabledPQCE(this);
                 }
         }else
-            ahplayerExec = new DisabledPQCE(this);
+            playerExec = new DisabledPQCE(this);
             
         if(vaultEnabled)
             setupPermissions();
@@ -69,13 +72,13 @@ public class ActivityHistory extends JavaPlugin{
             scheduleSurvey();
             
         if(vaultEnabled && config.getBoolean("groups.enabled"))
-            ahgroupExec = new FileGQCE(this);
+            groupExec = new FileGQCE(this);
         else
-            ahgroupExec = new DisabledGQCE(this);
+            groupExec = new DisabledGQCE(this);
         
-        getCommand("ppercent").setExecutor(ahplayerExec);
-        getCommand("ptotal").setExecutor(ahplayerExec);
-        getCommand("phours").setExecutor(ahplayerExec);
+        getCommand("ppercent").setExecutor(playerExec);
+        getCommand("ptotal").setExecutor(playerExec);
+        getCommand("phours").setExecutor(playerExec);
     }
     
     public FileConfiguration accessConfig(){
@@ -86,13 +89,6 @@ public class ActivityHistory extends JavaPlugin{
         RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
         perms = rsp.getProvider();
         return perms != null;
-    }
-    
-    public void logException(Exception e, String logFile){
-        if(debugMode.equalsIgnoreCase("basic"))
-            logger.log(Level.WARNING, "Error while updating log file for " + logFile + ".");
-        else if(debugMode.equalsIgnoreCase("advanced"))
-            e.printStackTrace();
     }
     
     @SuppressWarnings("deprecation")
@@ -109,8 +105,10 @@ public class ActivityHistory extends JavaPlugin{
         offset *= 60;
         offset -= time.getSeconds();
         offset *= 20;
-        if(config.getString("general.storageType").equals("file")){
+        if(config.getString("general.storageType").equalsIgnoreCase("file")){
             this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new FileSurveyer(this), offset, (interval*60*20));
+        }else if(config.getString("general.storageType").equalsIgnoreCase("sql") && dbm != null){
+            this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, dbm.getSurveyer(), offset, (interval*60*20));
         }
     }
 }
