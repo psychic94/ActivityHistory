@@ -19,7 +19,7 @@ public class CmdUtils{
         // args: <start>
         else if(args.length == (1+offset)){
             try{
-                start = timeStringToDate(args[1]);
+                start = timeStringToDate(args[0+offset]);
             }catch(Exception e){
                 sender.sendMessage(ActivityHistory.messages.getString("errors.firstDate"));
                 return null;
@@ -28,13 +28,13 @@ public class CmdUtils{
         // args: <start> <end>
         else if(args.length == (2+offset)){
             try{
-                start = timeStringToDate(args[1]);
+                start = timeStringToDate(args[0+offset]);
             }catch(Exception e){
                 sender.sendMessage(ActivityHistory.messages.getString("errors.firstDate"));
                 return null;
             }
             try{
-                end = timeStringToDate(args[4]);
+                end = timeStringToDate(args[1+offset]);
             }catch(Exception e){
                 sender.sendMessage(ActivityHistory.messages.getString("errors.secondDate"));
                 return null;
@@ -51,19 +51,19 @@ public class CmdUtils{
      * @param offset The number of arguments to skip
     */
     public static Integer parseHour(CommandSender sender, String[] args, int offset){
-        // args: <player> <start> at <hour>
-        if(args.length == 4 && args[2].equalsIgnoreCase("at")){
+        // args: <start> at <hour>
+        if(args.length == (3+offset) && args[1+offset].equalsIgnoreCase("at")){
             try{
-                return (new Integer(args[3]) - 1);
+                return (new Integer(args[2+offset]) - 1);
             }catch(NumberFormatException e){
                 sender.sendMessage(ActivityHistory.messages.getString("errors.invalidHour"));
                 return null;
             }
         }
-        // args: <player> <start> <end> at <hour>
-        if(args.length == 5 && args[3].equalsIgnoreCase("at")){
+        // args: <start> <end> at <hour>
+        if(args.length == (4+offset) && args[2+offset].equalsIgnoreCase("at")){
             try{
-                return (new Integer(args[4]) - 1);
+                return (new Integer(args[3+offset]) - 1);
             }catch(NumberFormatException e){
                 sender.sendMessage(ActivityHistory.messages.getString("errors.invalidHour"));
                 return null;
