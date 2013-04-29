@@ -28,7 +28,6 @@ public class FileSurveyer implements Runnable{
                     PlayerLogFile log = new PlayerLogFile(filename);
                     log.addSession(time, plugin.accessConfig().getInt("general.surveyInterval"));
                 }catch(Exception e){
-                    plugin.logException(e, player.getName());
                 }
             }
         }
@@ -36,10 +35,12 @@ public class FileSurveyer implements Runnable{
             String[] groups = ActivityHistory.perms.getGroups();
             for(String group : groups)
                 demogrphx.put(group, 0);
+            //Collect data on the groups
             for(Player player : players){
                 String group = ActivityHistory.perms.getPrimaryGroup(player);
                 demogrphx.put(group, demogrphx.remove(group) + 1);
             }
+            //Write the data
             try{
                 String filename = (String) plugin.accessConfig().get("general.logFilesLocation");
                 filename += "/groups.log";
@@ -56,7 +57,6 @@ public class FileSurveyer implements Runnable{
                 logbw.write(message);
                 logbw.flush();
             }catch(Exception e){
-                plugin.logException(e, "groups");
             }
         }
     }
