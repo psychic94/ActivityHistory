@@ -93,7 +93,11 @@ public class PlayerLogFile{
         return true;
     }
     
-    //Returns true if addition was successful, false if an error was caught
+    /**Adds a session to the file
+     * @param time The time of the survey
+     * @param len The survey interval
+     * @return True if addition was successful, false if an error was caught
+     */
     public boolean addSession(long time, int len){
         BufferedWriter bw = writer(true);
         try{
@@ -106,7 +110,10 @@ public class PlayerLogFile{
         return true;
     }
     
-    //Returns true if removal was successful, false if an error was caught
+    /**Removes sessions from within a TimeRange
+     * @param range Delete sessions from within this range
+     * @return True if removal was successful, false if an error was caught
+     */
     public boolean removeSessions(TimeRange range){
         for(Date date : sessions.keySet())
             if(range.includes(date))
@@ -122,7 +129,7 @@ public class PlayerLogFile{
             if(range.includes(date) || range.getStart().equals(firstSession))
                 time+=sessions.get(date);
         }
-        if(time == -1 || range.getStart() == null) return "There is no record of that player.";
+        if(time == -1 || range.getStart() == null) return ActivityHistory.messages.getString("errors.playerNotFound");
         int hours = time / 60, minutes = time % 60;
         return "" + hours + "hours" + minutes + "minutes";
     }
@@ -155,7 +162,6 @@ public class PlayerLogFile{
         try{
             return new BufferedReader(new FileReader(file));
         }catch(Exception e){
-            e.printStackTrace();
             return null;
         }
     }
@@ -164,7 +170,6 @@ public class PlayerLogFile{
         try{
             return new BufferedWriter(new FileWriter(file, append));
         }catch(Exception e){
-            e.printStackTrace();
             return null;
         }
     }
