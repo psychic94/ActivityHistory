@@ -22,7 +22,10 @@ public class GroupLogFile{
     
     @SuppressWarnings("unchecked")
     public GroupLogFile(String pathname){
-        file = new File(pathname);
+        this(new File(pathname));
+    }
+    
+    public GroupLogFile(File file){
         try{
             file.createNewFile();
         }catch(Exception e){
