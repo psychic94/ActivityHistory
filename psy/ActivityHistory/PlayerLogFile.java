@@ -137,8 +137,8 @@ public class PlayerLogFile{
         }
         if(time == -1 || range.getStart() == null) return -1;
         long startLong = new Long(range.getStart().getTime());
-        long dateLong = new Long((new Date()).getTime());
-        long timeDiff = dateLong - startLong;
+        long endLong = new Long(range.getEnd().getTime());
+        long timeDiff = endLong - startLong;
         timeDiff /= 1000;
         timeDiff /= 60;
         if(hour != -1)
