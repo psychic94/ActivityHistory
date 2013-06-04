@@ -1,0 +1,12 @@
+info:
+    dbConnect: 'Connect\u00e9 \u00e0 la base de donn\u00e9es.'
+    playerDisabled: 'Les requ\u00eates des joueurs sont d\u00e9sactiv\u00e9es pour le moment.'
+errors:
+    dbConnect: 'Impossible de se connecter \u00e0 la base de donn\u00e9es.'
+    dbUpdate: 'Erreur de mise \u00e0 jour de la base de donn\u00e9es.'
+    fileLoad: 'Erreur de chargement du fichier log.'
+    fileNotFound: 'Le fichier log est introuvable.'
+    firstDate: 'Erreur d\'analyse de la date de d\u00e9but. Utilisez le format MM/JJ/AA-hh:mm:ss'
+    invalidHour: 'Heure non valide. Utilisez un entier compris entre 1 et 24 exclusivement.
+    playerNotFound: 'Il n\'y a aucune trace de ce joueur.'
+    secondDate: 'Erreur d\'analyse de la date de fin. Utilisez le format MM/JJ/AA-hh:mm:ss'
