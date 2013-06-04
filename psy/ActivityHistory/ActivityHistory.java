@@ -26,13 +26,31 @@ import net.milkbowl.vault.permission.Permission;
 
 public class ActivityHistory extends JavaPlugin{
     private static final Logger logger = Logger.getLogger("Minecraft");
+    /**
+     * The Permissions handler. Null unless {@link vaultEnabled} is true.
+     */
     public static Permission perms = null;
+    /**
+     * The plugin configuration.
+     */
     public FileConfiguration config;
+    /**
+     * Stores whether Vault was detected when enabling.
+     */
     public static boolean vaultEnabled;
     private String debugMode;
+    /**
+     * The {@link CommandExecutor} in charge of player queries
+     */
     PlayerQueryCommandExecutor playerExec;
+    /**
+     * The {@link CommandExecutor} in charge of group queries
+     */
     GroupQueryCommandExecutor groupExec;
     public static DatabaseManager dbm;
+    /**
+     * The info and error messages as defined by the localization file in use.
+     */
     public static YamlConfiguration messages;
     
     @Override

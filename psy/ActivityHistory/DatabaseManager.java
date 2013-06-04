@@ -10,6 +10,9 @@ import java.util.Properties;
 import org.bukkit.entity.Player;
 import psy.util.TimeRange;
 
+/**
+ * Handles all database manipulation.
+ */
 public class DatabaseManager{
     private ActivityHistory plugin;
     private static final Logger logger = Logger.getLogger("Minecraft");

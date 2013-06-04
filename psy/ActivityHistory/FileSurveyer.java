@@ -9,6 +9,9 @@ import java.io.BufferedWriter;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.entity.Player;
 
+/**
+ * Surveys players and records data to files.
+ */
 public class FileSurveyer implements Runnable{
     ActivityHistory plugin;
     public FileSurveyer(Plugin pl){

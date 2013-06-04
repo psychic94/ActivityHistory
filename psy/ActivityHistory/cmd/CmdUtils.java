@@ -6,6 +6,9 @@ import psy.ActivityHistory.ActivityHistory;
 
 import org.bukkit.command.CommandSender;
 
+/**
+ * Handles methods needed by multiple CommandExecutors.
+ */
 public class CmdUtils{
     /**Iterprets the arguments from the command to determine the range to search
      * @param offset The number of arguments to skip
@@ -74,10 +77,10 @@ public class CmdUtils{
         }
     }
     
-    @SuppressWarnings("deprecation")
     /**Translates the format used in the command arguements into java.util.Date
      * @param str The string to be translated
     */
+    @SuppressWarnings("deprecation")
     protected static Date timeStringToDate(String str){
         Date now = new Date();
         Integer day = 1, month = now.getMonth(), year = now.getYear();

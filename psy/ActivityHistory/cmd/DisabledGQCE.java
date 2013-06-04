@@ -6,6 +6,9 @@ import org.bukkit.command.CommandSender;
 
 import psy.ActivityHistory.ActivityHistory;
 
+/**
+ * Used as a command placeholder for when group queries are disabled.
+ */
 public class DisabledGQCE extends GroupQueryCommandExecutor{
     public DisabledGQCE(Plugin pl){
     }

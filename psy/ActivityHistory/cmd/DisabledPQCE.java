@@ -6,6 +6,9 @@ import org.bukkit.command.CommandSender;
 
 import psy.ActivityHistory.ActivityHistory;
 
+/**
+ * Used as a command placeholder for when player queries are disabled.
+ */
 public class DisabledPQCE extends PlayerQueryCommandExecutor{
     public DisabledPQCE(Plugin pl){
     }
