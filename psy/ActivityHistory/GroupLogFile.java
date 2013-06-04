@@ -25,6 +25,7 @@ public class GroupLogFile{
         this(new File(pathname));
     }
     
+    @SuppressWarnings("unchecked")
     public GroupLogFile(File file){
         try{
             file.createNewFile();
@@ -36,6 +37,7 @@ public class GroupLogFile{
         firstSession = getFirstSession();
     }
     
+    @SuppressWarnings("unchecked")
     //Returns true if loading successful, false if an error was caught
     private boolean loadSessions(){
         BufferedReader br = reader();
