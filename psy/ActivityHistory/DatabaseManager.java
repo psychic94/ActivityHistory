@@ -40,8 +40,7 @@ public class DatabaseManager{
             sql += "ORDER BY SurveyTime";
             ResultSet result = stmt.executeQuery(sql);
             if(range.getStart() == null){
-                ResultSet temp = stmt.executeQuery(sql);
-                range.setStart(temp.getTimestamp(1));
+                range.setStart(result.getTimestamp(1));
             }
             Timestamp start = new Timestamp(range.getStart().getTime());
             Timestamp end = new Timestamp(range.getEnd().getTime());
@@ -49,18 +48,18 @@ public class DatabaseManager{
             int time = stmt.executeQuery(sql).getInt(1);
             
             long startLong = new Long(range.getStart().getTime());
-            long dateLong = new Long((new Date()).getTime());
-//         long timeDiff = dateLong - startLong;
-//         timeDiff /= 1000;
-//         timeDiff /= 60;
-//         if(hour != -1)
-//             timeDiff /= 24;
-//         time *= 100;
-//         double percent = ((double)time)/timeDiff;
-//         percent *= 100;
-//         percent = Math.round(percent);
-//         percent /= 100;
-//         return percent;
+            long endLong = new Long(range.getEnd().getTime());
+            long timeDiff = endLong - startLong;
+            timeDiff /= 1000;
+            timeDiff /= 60;
+            if(hour != -1)
+               timeDiff /= 24;
+            time *= 100;
+            double percent = ((double)time)/timeDiff;
+            percent *= 100;
+            percent = Math.round(percent);
+            percent /= 100;
+            return percent;
         }catch(Exception e){
         }
         return 0;
