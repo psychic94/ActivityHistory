@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.IOException;
 import java.sql.SQLException;
 
 import org.bukkit.plugin.java.JavaPlugin;
@@ -79,6 +80,12 @@ public class ActivityHistory extends JavaPlugin{
         getCommand("ppercent").setExecutor(playerExec);
         getCommand("ptotal").setExecutor(playerExec);
         getCommand("phours").setExecutor(playerExec);
+        
+        try {
+            Metrics metrics = new Metrics(this);
+            metrics.start();
+        } catch (IOException e) {
+        }
     }
     
     public FileConfiguration accessConfig(){
