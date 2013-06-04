@@ -19,10 +19,18 @@ public class PlayerLogFile{
     private Date firstSession;
     private File file;
     
+    /**
+     * Creates and wraps a new {@link File} from a pathname.
+     * @param pathname The path of the file to be created
+     */
     public PlayerLogFile(String pathname){
         this(new File(pathname));
     }
     
+    /**
+     * Wraps a pre-existing {@link File}.
+     * @param file The file to be wrapped
+     */
     @SuppressWarnings("unchecked")
     public PlayerLogFile(File file){
         try{
