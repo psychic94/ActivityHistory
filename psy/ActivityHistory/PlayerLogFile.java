@@ -145,15 +145,14 @@ public class PlayerLogFile{
     @SuppressWarnings("deprecation")
     public double tallyActivityPercent(TimeRange range, int hour){
         if(range.getStart() == null) range.setStart(firstSession);
+        if(range.getStart() == null) range.setStart(new Date(113, 7, 17));
         int time = 0;
         for(Date date : sessions.keySet()){
             if((range.includes(date) || range.getStart().equals(firstSession)) && (hour == -1 || date.getHours() == hour))
                 time+=sessions.get(date);
         }
         if(time == -1 || range.getStart() == null) return -1;
-        long startLong = new Long(range.getStart().getTime());
-        long endLong = new Long(range.getEnd().getTime());
-        long timeDiff = endLong - startLong;
+        long timeDiff = range.length();
         timeDiff /= 1000;
         timeDiff /= 60;
         if(hour != -1)
