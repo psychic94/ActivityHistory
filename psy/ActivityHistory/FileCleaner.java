@@ -26,9 +26,13 @@ public class FileCleaner implements Runnable{
                 //boolean successful = pfile.removeSessions();
                 //if(!successful) System.out.println(ActivityHistory.messages.getString("error.clean"));
             }else{
-                PlayerLogFile pfile = new PlayerLogFile(file);
-                boolean successful = pfile.removeSessions(new TimeRange(null, date));
-                if(!successful) System.out.println(ActivityHistory.messages.getString("error.clean"));
+                try{
+                    PlayerLogFile pfile = new PlayerLogFile(file);
+                    pfile.removeSessions(new TimeRange(null, date));
+                }catch(Exception e){
+                    System.out.println(ActivityHistory.messages.getString("errors.cleaning"));
+                    return;
+                }
             }
         }
         plugin.accessConfig().set("cleaner.lastCleanTime", (new Date()).getTime());

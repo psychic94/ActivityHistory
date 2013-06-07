@@ -28,9 +28,13 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
             file = loadLogFile(args[0]);
         }catch(FileNotFoundException e){
             sender.sendMessage(ActivityHistory.messages.getString("errors.fileNotFound"));
+            if(plugin.accessConfig().getString("general.debugMode").equalsIgnoreCase("advanced"))
+                e.printStackTrace();
             return true;
         }catch(IOException e){
             sender.sendMessage(ActivityHistory.messages.getString("errors.fileLoad"));
+            if(plugin.accessConfig().getString("general.debugMode").equalsIgnoreCase("advanced"))
+                e.printStackTrace();
             return true;
         }
             
@@ -40,6 +44,8 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
             
         String mode = cmd.getName();
         TimeRange range = CmdUtils.parseRange(sender, args, 1);
+        if(plugin.accessConfig().getString("general.debugMode").equalsIgnoreCase("advanced"))
+            sender.sendMessage("Range: " + range);
         if(range==null) return true;
         if(mode.equalsIgnoreCase("ppercent")){
             Integer hour = CmdUtils.parseHour(sender, args, 1);

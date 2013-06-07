@@ -23,7 +23,7 @@ public class PlayerLogFile{
      * Creates and wraps a new {@link File} from a pathname.
      * @param pathname The path of the file to be created
      */
-    public PlayerLogFile(String pathname){
+    public PlayerLogFile(String pathname) throws FileNotFoundException, IOException{
         this(new File(pathname));
     }
     
@@ -32,29 +32,19 @@ public class PlayerLogFile{
      * @param file The file to be wrapped
      */
     @SuppressWarnings("unchecked")
-    public PlayerLogFile(File file){
-        try{
-            file.createNewFile();
-        }catch(Exception e){
-        }
+    public PlayerLogFile(File file) throws FileNotFoundException, IOException{
+        file.createNewFile();
         sessions = new HashMap();
         firstSession = null;
         loadSessions();
         firstSession = getFirstSession();
     }
     
-    //Returns true if loading successful, false if an error was caught
-    private boolean loadSessions(){
-        BufferedReader br = reader();
+    private void loadSessions() throws FileNotFoundException, IOException{
+        BufferedReader br = new BufferedReader(new FileReader(file));
         while(true){
             String line = new String();
-            try{
                 line = br.readLine();
-            }catch(IOException e){
-                break;
-            }catch(NullPointerException e){
-                break;
-            }
             if(line==null) break;
             else if (line.trim().equals("")) continue;
             String[] data = line.split(":");
@@ -70,63 +60,39 @@ public class PlayerLogFile{
             sessions.put(date, len);
         }
         //Save any changes made when fixing invalid data
-        return saveSessions();
+        saveSessions();
     }
     
-    //Returns true if saving was successful, false if an error was caught
     @SuppressWarnings("unchecked")
-    private boolean saveSessions(){
+    private void saveSessions() throws IOException{
         BufferedWriter bw = writer(false);
         for(Date key : sessions.keySet()){
-            try{
-                bw.write(key.getTime() + ":" + sessions.get(key));
-                bw.newLine();
-            }catch(IOException e){
-                continue;
-            }
+            bw.write(key.getTime() + ":" + sessions.get(key));
+            bw.newLine();
         }
-        try{
-            bw.flush();
-        }catch(IOException e){
-            return false;
-        }catch(NullPointerException e){
-            return false;
-        }
-        try{
-            bw.close();
-        }catch(Exception e){
-            e.printStackTrace();
-            return false;
-        }
-        return true;
+        bw.flush();
+        bw.close();
     }
     
     /**Adds a session to the file
      * @param time The time of the survey
      * @param len The survey interval
-     * @return True if addition was successful, false if an error was caught
      */
-    public boolean addSession(long time, int len){
+    public void addSession(long time, int len) throws IOException{
         BufferedWriter bw = writer(true);
-        try{
-            bw.write("" + time + ":" + len);
-            bw.newLine();
-            bw.flush();
-        }catch(IOException e){
-            return false;
-        }
-        return true;
+        bw.write("" + time + ":" + len);
+        bw.newLine();
+        bw.flush();
     }
     
     /**Removes sessions from within a TimeRange
      * @param range Delete sessions from within this range
-     * @return True if removal was successful, false if an error was caught
      */
-    public boolean removeSessions(TimeRange range){
+    public void removeSessions(TimeRange range) throws IOException{
         for(Date date : sessions.keySet())
             if(range.includes(date))
                 sessions.remove(date);
-        return saveSessions();
+        saveSessions();
     }
     
     @SuppressWarnings("deprecation")
@@ -145,13 +111,14 @@ public class PlayerLogFile{
     @SuppressWarnings("deprecation")
     public double tallyActivityPercent(TimeRange range, int hour){
         if(range.getStart() == null) range.setStart(firstSession);
-        if(range.getStart() == null) range.setStart(new Date(113, 7, 17));
+        if(range.getStart() == null) range.setStart(new Date(112, 8, 17));
+        System.out.println(range);
         int time = 0;
         for(Date date : sessions.keySet()){
             if((range.includes(date) || range.getStart().equals(firstSession)) && (hour == -1 || date.getHours() == hour))
                 time+=sessions.get(date);
         }
-        if(time == -1) return -1;
+        if(time == 0) return -1;
         long timeDiff = range.length();
         timeDiff /= 1000;
         timeDiff /= 60;
@@ -165,27 +132,18 @@ public class PlayerLogFile{
         return percent;
     }
     
-    private BufferedReader reader(){
-        try{
-            return new BufferedReader(new FileReader(file));
-        }catch(Exception e){
-            return null;
-        }
-    }
-    
-    private BufferedWriter writer(boolean append){
-        try{
-            return new BufferedWriter(new FileWriter(file, append));
-        }catch(Exception e){
-            return null;
-        }
+    private BufferedWriter writer(boolean append) throws FileNotFoundException, IOException{
+        return new BufferedWriter(new FileWriter(file, append));
     }
     
     private Date getFirstSession(){
         Date first = new Date();
-        for(Date date : sessions.keySet())
-            if(date.before(first))
-                first = date;
+        Date[] dates = new Date[sessions.size()];
+        sessions.keySet().toArray(dates);
+        for(int i=0; i<dates.length; i++){
+            if(dates[i].before(first))
+                first = dates[i];
+        }
         return first;
     }
 }
