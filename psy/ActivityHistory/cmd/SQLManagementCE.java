@@ -1,35 +1,14 @@
 package psy.ActivityHistory.cmd;
 
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 
 /**
- * Write a description of class SQLManagementCE here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
+ * Handles commands to manage data stored in the database.
  */
-public class SQLManagementCE
-{
-    // instance variables - replace the example below with your own
-    private int x;
-
-    /**
-     * Constructor for objects of class SQLManagementCE
-     */
-    public SQLManagementCE()
-    {
-        // initialise instance variables
-        x = 0;
-    }
-
-    /**
-     * An example of a method - replace this comment with your own
-     * 
-     * @param  y   a sample parameter for a method
-     * @return     the sum of x and y 
-     */
-    public int sampleMethod(int y)
-    {
-        // put your code here
-        return x + y;
+public class SQLManagementCE implements CommandExecutor{
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
+        return true;
     }
 }

@@ -151,7 +151,7 @@ public class PlayerLogFile{
             if((range.includes(date) || range.getStart().equals(firstSession)) && (hour == -1 || date.getHours() == hour))
                 time+=sessions.get(date);
         }
-        if(time == -1 || range.getStart() == null) return -1;
+        if(time == -1) return -1;
         long timeDiff = range.length();
         timeDiff /= 1000;
         timeDiff /= 60;
@@ -179,17 +179,6 @@ public class PlayerLogFile{
         }catch(Exception e){
             return null;
         }
-    }
-    
-    @SuppressWarnings("deprecation")
-    private boolean matchesConditions(Date date, Date start, Date end, int hour){
-        if(!date.before(end))
-            return false;
-        if(start != null && !date.after(start) && !date.equals(start))
-            return false;
-        if(hour != -1 && date.getHours() != hour)
-            return false;
-        return true;
     }
     
     private Date getFirstSession(){
