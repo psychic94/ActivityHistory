@@ -68,7 +68,13 @@ public class TimeRange{
     }
     
     public String toString(){
-        return ("" + start.getTime() + "-" + end.getTime());
+        String out = "";
+        if(start!=null)
+            out+=start.getTime();
+        out+=" - ";
+        if(end!=null)
+            out+=end.getTime();
+        return out;
     }
     
     public long overlap(TimeRange other){
