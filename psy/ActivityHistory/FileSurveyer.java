@@ -34,7 +34,7 @@ public class FileSurveyer implements Runnable{
                 }
             }
         }
-        if(ActivityHistory.vaultEnabled && plugin.accessConfig().getBoolean("groups.enabled")){
+        if(ActivityHistory.vaultEnabled && plugin.accessConfig().getBoolean("groups.enabled") && plugin.vaultEnabled){
             String[] groups = ActivityHistory.perms.getGroups();
             for(String group : groups)
                 demogrphx.put(group, 0);

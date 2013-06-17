@@ -32,7 +32,8 @@ public class PlayerLogFile{
      * @param file The file to be wrapped
      */
     @SuppressWarnings("unchecked")
-    public PlayerLogFile(File file) throws FileNotFoundException, IOException{
+    public PlayerLogFile(File initFile) throws FileNotFoundException, IOException{
+        file = initFile;
         file.createNewFile();
         sessions = new HashMap();
         firstSession = null;
