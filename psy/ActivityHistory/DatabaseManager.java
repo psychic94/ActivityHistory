@@ -28,12 +28,39 @@ public class DatabaseManager{
             plugin.accessConfig().getString("SQL.port") + "/", conProps
         );
         logger.log(Level.INFO, ActivityHistory.messages.getString("info.dbConnect"));
-        surveyer = new SQLSurveyer();
-        Statement stmt = con.createStatement();
-        String sql = "CREATE TABLE Players(EntryID int NOT NULL AUTO_INCREMENT, SurveyTime timestamp NOT NULL, SurveyInterval int NOT NULL, PlayerName varchar(20) NOT NULL, PRIMARY KEY (EntryID))";
-        stmt.executeUpdate(sql);
-        sql = "CREATE TABLE Groups(EntryID int NOT NULL AUTO_INCREMENT, SurveyTime timestamp NOT NULL, SurveyInterval int NOT NULL, GroupName text NOT NULL, GroupCount int NOT NULL, PRIMARY KEY (EntryID))";
-        stmt.executeUpdate(sql);
+        surveyer = new SQLSurveyer();createPlayerTable();
+        
+        DatabaseMetaData meta = con.getMetaData();
+        ResultSet tables = meta.getTables(null, null, "Players", null);
+        if(!tables.next()) createPlayerTable();
+        
+        tables = meta.getTables(null, null, "Groups", null);
+        if(!tables.next()) createGroupTable();
+    }
+    
+    public void createPlayerTable() throws SQLException{
+        Statement stmnt = con.createStatement();
+        stmnt.executeUpdate(
+            "CREATE TABLE Attendance("
+            + "EntryID INT NOT NULL AUTO_INCREMENT, Player VARCHAR(16) NOT NULL, "
+            + "Day DATE NOT NULL, Hour0 BINARY(60), Hour1 BINARY(60), "
+            + "Hour2 BINARY(60), Hour3 BINARY(60), Hour4 BINARY(60), "
+            + "Hour5 BINARY(60), Hour6 BINARY(60), Hour7 BINARY(60), "
+            + "Hour8 BINARY(60), Hour9 BINARY(60), Hour10 BINARY(60), "
+            + "Hour11 BINARY(60), Hour12 BINARY(60), Hour13 BINARY(60), "
+            + "Hour14 BINARY(60), Hour15 BINARY(60), Hour16 BINARY(60), "
+            + "Hour17 BINARY(60), Hour18 BINARY(60), Hour19 BINARY(60), "
+            + "Hour20 BINARY(60), Hour21 BINARY(60), Hour22 BINARY(60), "
+            + "Hour23 BINARY(60), PRIMARY KEY (EntryID))"
+        );
+    }
+    
+    public void createGroupTable() throws SQLException{
+        Statement stmnt = con.createStatement();
+        stmnt.executeUpdate(
+            "CREATE TABLE Groups(EntryID int NOT NULL AUTO_INCREMENT, SurveyTime timestamp NOT NULL, "
+            + "PRIMARY KEY (EntryID))"
+        );
     }
     
     public double tallyActivityPercent(TimeRange range, int hour, String playername){
