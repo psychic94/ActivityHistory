@@ -1,13 +1,20 @@
 package psy.ActivityHistory;
 
-import java.util.logging.Logger;
-import java.util.logging.Level;
-import java.util.HashMap;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.Date;
-import java.sql.*;
+import java.util.HashMap;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bukkit.entity.Player;
+
 import psy.util.TimeRange;
 
 /**
@@ -100,9 +107,8 @@ public class DatabaseManager{
     }
     
     public class SQLSurveyer implements Runnable{
-        @SuppressWarnings("unchecked")
         public void run(){
-            HashMap<String, Integer> demogrphx = new HashMap();
+            HashMap<String, Integer> demogrphx = new HashMap<String, Integer>();
             long time = (new Date()).getTime();
             Player[] players = plugin.getServer().getOnlinePlayers();
             if(plugin.accessConfig().getBoolean("players.enabled")){

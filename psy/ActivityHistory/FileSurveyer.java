@@ -1,13 +1,13 @@
 package psy.ActivityHistory;
 
-import java.util.HashMap;
-import java.util.Date;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.BufferedWriter;
+import java.util.Date;
+import java.util.HashMap;
 
-import org.bukkit.plugin.Plugin;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 /**
  * Surveys players and records data to files.
@@ -18,9 +18,8 @@ public class FileSurveyer implements Runnable{
         plugin = (ActivityHistory) pl;
     }
     
-    @SuppressWarnings("unchecked")
     public void run(){
-        HashMap<String, Integer> demogrphx = new HashMap();
+        HashMap<String, Integer> demogrphx = new HashMap<String, Integer>();
         long time = (new Date()).getTime();
         Player[] players = plugin.getServer().getOnlinePlayers();
         if(plugin.accessConfig().getBoolean("players.enabled")){
@@ -34,7 +33,7 @@ public class FileSurveyer implements Runnable{
                 }
             }
         }
-        if(ActivityHistory.vaultEnabled && plugin.accessConfig().getBoolean("groups.enabled") && plugin.vaultEnabled){
+        if(ActivityHistory.vaultEnabled && plugin.accessConfig().getBoolean("groups.enabled") && ActivityHistory.vaultEnabled){
             String[] groups = ActivityHistory.perms.getGroups();
             for(String group : groups)
                 demogrphx.put(group, 0);

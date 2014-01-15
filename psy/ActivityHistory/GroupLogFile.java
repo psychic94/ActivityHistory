@@ -1,16 +1,13 @@
 package psy.ActivityHistory;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.BufferedReader;
 import java.io.FileWriter;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Date;
-import java.util.Stack;
-import java.util.EmptyStackException;
+import java.util.HashMap;
 
 import psy.util.TimeRange;
 
@@ -20,7 +17,6 @@ public class GroupLogFile{
     private Date firstSession;
     private File file;
     
-    @SuppressWarnings("unchecked")
     public GroupLogFile(String pathname){
         this(new File(pathname));
     }
@@ -37,7 +33,6 @@ public class GroupLogFile{
         firstSession = getFirstSession();
     }
     
-    @SuppressWarnings("unchecked")
     //Returns true if loading successful, false if an error was caught
     private boolean loadSessions(){
         BufferedReader br = reader();
@@ -62,7 +57,7 @@ public class GroupLogFile{
                 continue;
             }
             data = data[2].split(",");
-            HashMap temp = new HashMap<String, Integer>();
+            HashMap<String, Integer> temp = new HashMap<String, Integer>();
             for(String datum : data){
                 String[] temp2 = datum.trim().split(" ");
                 temp.put(temp2[1], new Integer(temp2[0]));
@@ -75,7 +70,6 @@ public class GroupLogFile{
     }
     
     //Returns true if saving was successful, false if an error was caught
-    @SuppressWarnings("unchecked")
     private boolean saveSessions(){
         BufferedWriter bw = writer(false);
         for(Date key : sessions.keySet()){
@@ -124,7 +118,6 @@ public class GroupLogFile{
         return true;
     }
     
-    @SuppressWarnings("deprecation")
     public String tallyActivityTotal(TimeRange range){
         if(range.getStart() == null) range.setStart(firstSession);
         int time = 0;
