@@ -1,16 +1,18 @@
 package psy.ActivityHistory.cmd;
 
 import java.util.Date;
-import psy.util.TimeRange;
-import psy.ActivityHistory.ActivityHistory;
 
 import org.bukkit.command.CommandSender;
+
+import psy.ActivityHistory.ActivityHistory;
+import psy.util.TimeRange;
 
 /**
  * Handles methods needed by multiple CommandExecutors.
  */
 public class CmdUtils{
     /**Iterprets the arguments from the command to determine the range to search
+     * An argument index offset is given because different CommandExecutors have different argument lists
      * @param offset The number of arguments to skip
     */
     public static TimeRange parseRange(CommandSender sender, String[] args, int offset){
@@ -51,6 +53,7 @@ public class CmdUtils{
     
     
     /**Iterprets the arguments from the command to determine the time of day to search
+     * An argument index offset is given because different CommandExecutors have different argument lists
      * @param offset The number of arguments to skip
     */
     public static Integer parseHour(CommandSender sender, String[] args, int offset){

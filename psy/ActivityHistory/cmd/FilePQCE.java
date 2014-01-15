@@ -1,13 +1,13 @@
 package psy.ActivityHistory.cmd;
 
-import java.util.Date;
-import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
-import org.bukkit.plugin.Plugin;
-import org.bukkit.entity.Player;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
 import psy.ActivityHistory.ActivityHistory;
 import psy.ActivityHistory.PlayerLogFile;
 import psy.util.TimeRange;
@@ -24,38 +24,48 @@ public class FilePQCE extends PlayerQueryCommandExecutor{
         }
         
         PlayerLogFile file = null;
+        String debugMode = plugin.accessConfig().getString("general.debugMode");
+        		
+        //Load log file		
         try{
             file = loadLogFile(args[0]);
         }catch(FileNotFoundException e){
             sender.sendMessage(ActivityHistory.messages.getString("errors.fileNotFound"));
-            if(plugin.accessConfig().getString("general.debugMode").equalsIgnoreCase("advanced"))
+            if(debugMode.equalsIgnoreCase("advanced"))
                 e.printStackTrace();
             return true;
         }catch(IOException e){
             sender.sendMessage(ActivityHistory.messages.getString("errors.fileLoad"));
-            if(plugin.accessConfig().getString("general.debugMode").equalsIgnoreCase("advanced"))
+            if(debugMode.equalsIgnoreCase("advanced"))
                 e.printStackTrace();
             return true;
         }
-            
+        
         Player player = null;
         if(sender instanceof Player)
             player = (Player) sender;
-            
+        
+        //Analyze command     
         String mode = cmd.getName();
         TimeRange range = CmdUtils.parseRange(sender, args, 1);
-        if(plugin.accessConfig().getString("general.debugMode").equalsIgnoreCase("advanced"))
+        if(debugMode.equalsIgnoreCase("advanced"))
             sender.sendMessage("Range: " + range);
         if(range==null) return true;
+        
+        //Player activity percent
         if(mode.equalsIgnoreCase("ppercent")){
             Integer hour = CmdUtils.parseHour(sender, args, 1);
             if(hour==null) return true;
             double percent = file.tallyActivityPercent(range, hour);
             if(percent<=0) sender.sendMessage(ActivityHistory.messages.getString("errors.playerNotFound"));
             else sender.sendMessage("" + percent + "%");
-        }else if(mode.equalsIgnoreCase("ptotal")){
+        }
+        //Player total ontime
+        else if(mode.equalsIgnoreCase("ptotal")){
             sender.sendMessage(file.tallyActivityTotal(range));
-        }else if(mode.equalsIgnoreCase("phours")){
+        }
+        //Player activity percent by hour
+        else if(mode.equalsIgnoreCase("phours")){
             double[] data = new double[24];
             String[] messages = {"", "", "", ""};
             for(int i=0; i<24; i++){

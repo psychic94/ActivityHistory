@@ -38,7 +38,6 @@ public class ActivityHistory extends JavaPlugin{
      * Stores whether Vault was detected when enabling.
      */
     public static boolean vaultEnabled;
-    private String debugMode;
     /**
      * The {@link CommandExecutor} in charge of player queries
      */
