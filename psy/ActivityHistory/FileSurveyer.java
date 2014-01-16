@@ -58,6 +58,7 @@ public class FileSurveyer implements Runnable{
                 logbw.newLine();
                 logbw.write(message);
                 logbw.flush();
+                logbw.close();
             }catch(Exception e){
             }
         }

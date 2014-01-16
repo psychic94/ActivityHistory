@@ -27,7 +27,7 @@ public class GroupLogFile{
             file.createNewFile();
         }catch(Exception e){
         }
-        sessions = new HashMap();
+        sessions = new HashMap<Date, Integer>();
         firstSession = null;
         loadSessions();
         firstSession = getFirstSession();

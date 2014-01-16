@@ -1,17 +1,15 @@
 package psy.ActivityHistory.cmd;
 
-import java.util.Date;
-import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
-import org.bukkit.plugin.Plugin;
-import org.bukkit.entity.Player;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
 import psy.ActivityHistory.ActivityHistory;
 import psy.ActivityHistory.GroupLogFile;
-import psy.util.TimeRange;
-
 import psy.util.TimeRange;
 
 public class FileGQCE extends GroupQueryCommandExecutor{
