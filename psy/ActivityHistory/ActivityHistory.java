@@ -57,7 +57,6 @@ public class ActivityHistory extends JavaPlugin{
         saveDefaultConfig();
         config = this.getConfig();
         vaultEnabled = (this.getServer().getPluginManager().getPlugin("Vault")) != null;
-        debugMode = (String) config.getString("general.debugMode");
         
         //Load the localization of messages
         InputStream stream = getResource(config.getString("general.language").toLowerCase() + ".yml");
