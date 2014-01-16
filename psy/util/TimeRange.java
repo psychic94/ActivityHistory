@@ -31,6 +31,28 @@ public class TimeRange{
     		start = e;
     	}
     }
+    
+    /**
+     * Creates a TimeRange with a given length and start Date
+     * @param s The start date
+     * @param length The length of the time range in milliseconds
+     */
+    public TimeRange(Date s, long length){
+    	start = s;
+    	long temp = start.getTime()+length;
+    	end = new Date(temp);
+    }
+    
+    /**
+     * Creates a TimeRange with a given length and end Date
+     * @param length The length of the time range in milliseconds
+     * @param s The end date
+     */
+    public TimeRange(long length, Date e){
+    	end = e;
+    	long temp = end.getTime()-length;
+    	start = new Date(temp);
+    }
 
     /**
      * Creates a TimeRange from a {@link java.lang.String}. The inverse of toString()
