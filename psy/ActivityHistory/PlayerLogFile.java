@@ -1,16 +1,14 @@
 package psy.ActivityHistory;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.BufferedReader;
-import java.io.FileWriter;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Date;
-import java.util.Stack;
-import java.util.EmptyStackException;
+import java.util.HashMap;
 
 import psy.util.TimeRange;
 
@@ -31,11 +29,10 @@ public class PlayerLogFile{
      * Wraps a pre-existing {@link File}.
      * @param file The file to be wrapped
      */
-    @SuppressWarnings("unchecked")
     public PlayerLogFile(File initFile) throws FileNotFoundException, IOException{
         file = initFile;
         file.createNewFile();
-        sessions = new HashMap();
+        sessions = new HashMap<Date, Integer>();
         firstSession = null;
         loadSessions();
         firstSession = getFirstSession();
@@ -60,11 +57,11 @@ public class PlayerLogFile{
             }
             sessions.put(date, len);
         }
+        br.close();
         //Save any changes made when fixing invalid data
         saveSessions();
     }
     
-    @SuppressWarnings("unchecked")
     private void saveSessions() throws IOException{
         BufferedWriter bw = writer(false);
         for(Date key : sessions.keySet()){
@@ -96,12 +93,11 @@ public class PlayerLogFile{
         saveSessions();
     }
     
-    @SuppressWarnings("deprecation")
     public String tallyActivityTotal(TimeRange range){
         if(range.getStart() == null) range.setStart(firstSession);
         int time = 0;
         for(Date date : sessions.keySet()){
-            if(range.includes(date) || range.getStart().equals(firstSession))
+            if(range.includes(date))
                 time+=sessions.get(date);
         }
         if(time == -1 || range.getStart() == null) return ActivityHistory.messages.getString("errors.playerNotFound");
@@ -112,21 +108,21 @@ public class PlayerLogFile{
     @SuppressWarnings("deprecation")
     public double tallyActivityPercent(TimeRange range, int hour){
         if(range.getStart() == null) range.setStart(firstSession);
+        //If the above line didnt work, set the start to when this plugin was first published
         if(range.getStart() == null) range.setStart(new Date(112, 8, 17));
-        System.out.println(range);
         int time = 0;
         for(Date date : sessions.keySet()){
-            if((range.includes(date) || range.getStart().equals(firstSession)) && (hour == -1 || date.getHours() == hour))
+            if(range.includes(date) && (hour == -1 || date.getHours() == hour))
                 time+=sessions.get(date);
         }
         if(time == 0) return -1;
-        long timeDiff = range.length();
-        timeDiff /= 1000;
-        timeDiff /= 60;
-        if(hour != -1)
-            timeDiff /= 24;
-        time *= 100;
-        double percent = ((double)time)/timeDiff;
+        
+        //Calculate activity percent to two decimal places
+        double percent;
+        if(hour == -1)
+        	percent = (double)time/range.lengthInMinutes();
+        else
+        	percent = 24.0*time/range.lengthInMinutes();
         percent *= 100;
         percent = Math.round(percent);
         percent /= 100;
