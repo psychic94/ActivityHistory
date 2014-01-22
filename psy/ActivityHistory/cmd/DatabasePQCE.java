@@ -36,7 +36,7 @@ public class DatabasePQCE extends PlayerQueryCommandExecutor{
         }
         //Player total ontime
         else if(mode.equalsIgnoreCase("ptotal")){
-            //sender.sendMessage(file.tallyActivityTotal(range));
+            sender.sendMessage(ActivityHistory.dbm.tallyActivityTotal(range, -1, args[0]));
         }
         //Player activity percent by hour
         else if(mode.equalsIgnoreCase("phours")){

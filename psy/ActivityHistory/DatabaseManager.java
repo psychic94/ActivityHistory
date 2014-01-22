@@ -35,7 +35,7 @@ public class DatabaseManager{
             plugin.accessConfig().getString("SQL.port") + "/", conProps
         );
         logger.log(Level.INFO, ActivityHistory.messages.getString("info.dbConnect"));
-        surveyer = new SQLSurveyer();createPlayerTable();
+        surveyer = new SQLSurveyer();
         
         DatabaseMetaData meta = con.getMetaData();
         ResultSet tables = meta.getTables(null, null, "Players", null);
@@ -60,6 +60,34 @@ public class DatabaseManager{
             "CREATE TABLE Groups(EntryID int NOT NULL AUTO_INCREMENT, SurveyTime timestamp NOT NULL, "
             + "PRIMARY KEY (EntryID))"
         );
+    }
+    
+    public String tallyActivityTotal(TimeRange range, int hour, String playername){
+        try{
+        	//Get data
+            Statement stmt = con.createStatement();
+            String sql = "SELECT * FROM Players WHERE PlayerName = " + playername;
+            sql += "AS Sessions ORDER BY Start";
+            ResultSet result = stmt.executeQuery(sql);
+            //Set the range start, if necessary
+            if(range.getStart() == null){
+            	result.first();
+                range.setStart(result.getDate(3));
+            }
+            
+            //Sum the overlaps of the sessions and the search TimeRange
+            long ontime = 0;
+            result.beforeFirst();
+            while(result.next()){
+            	TimeRange temp = new TimeRange(result.getDate(3), result.getDate(4));
+            	ontime += range.overlap(temp);
+            }
+            
+            //Calculate activity percent to two decimal places
+            return ontime + " minutes";
+        }catch(Exception e){
+        }
+        return 0;
     }
     
     public double tallyActivityPercent(TimeRange range, int hour, String playername){
@@ -88,6 +116,10 @@ public class DatabaseManager{
             percent *= 100;
             percent = Math.round(percent);
             percent /= 100;
+            if(hour!=-1){
+            	//Compensate for only 1 hour a day being searched
+            	percent *= 24;
+            }
             return percent;
         }catch(Exception e){
         }
@@ -101,21 +133,22 @@ public class DatabaseManager{
     public class SQLSurveyer implements Runnable{
         public void run(){
             HashMap<String, Integer> demogrphx = new HashMap<String, Integer>();
-            long time = (new Date()).getTime();
+            long start = (new Date()).getTime();
+            long end = start + plugin.accessConfig().getInt("general.surveyInterval")*60000;
             Player[] players = plugin.getServer().getOnlinePlayers();
             if(plugin.accessConfig().getBoolean("players.enabled")){
                 for(Player player : players){
                     try{
                         Statement stmt = con.createStatement();
-                        String sql = "INSERT INTO Players (SurveyTime, SurveyInterval, PlayerName) VALUES (";
-                        sql += new Timestamp(time) + ", " + plugin.accessConfig().getInt("general.surveyInterval") + ", " + player.getName() + ")";
+                        String sql = "INSERT INTO Players (PlayerName, Start, End) VALUES (";
+                        sql += player.getName() + new Date(start) + ", " + new Date(end) + ")";
                         stmt.executeUpdate(sql);
                     }catch(Exception e){
                         logger.log(Level.WARNING, ActivityHistory.messages.getString("errors.dbUpdate"));
                     }
                 }
             }
-            if(ActivityHistory.vaultEnabled && plugin.accessConfig().getBoolean("groups.enabled")){
+            if(false && ActivityHistory.vaultEnabled && plugin.accessConfig().getBoolean("groups.enabled")){
                 String[] groups = ActivityHistory.perms.getGroups();
                 for(String group : groups)
                     demogrphx.put(group, 0);
