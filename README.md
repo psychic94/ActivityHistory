@@ -2,36 +2,42 @@ This plugin allows you to monitor who is active and when. If you also use Vault,
 
 News
 
-    SQL mode in development!
+    SQL mode released! Group queries for SQL still being developed.
+    Localization feature added. If you would like to contribute a language, translate the en-us.yml file in the jar and submit it in a ticket.
     Having a banner contest. Submit a ticket with the banner. If I like it, it will become the official banner and you will be a contributor.
 
 Upcoming Features:
 
-    Optional SQL support
+    Further develop group queries
+    Continual mode
     Web app to show graphs of the data collected
-    Fix ahgroup
     Ability to ignore afk players using essentials
     Ability to autokick inactive players from factions.
     More configurables
 
 Current Commands:
 
-    /ahplayer <player> [<date/time> [to <date/time>]] [at <hour>] - checks record to and reports the percent of time the player was online in the period specified; the at param restricts the check to a the time of day specified.
-    /ahgroup staffdist [start [end]] - draws a histogram illustrating the average staff percent during each hour of the day. Also shows the average peak. Currently not working properly.
+    /ppercent <player> [start [end]] ["at" hour]: Shows the percent of online time between <start> and <end>. Restrict the search to a certain time using <hour>.
+    /ptotal <player> [start [end]]: Shows the total online time between <start> and <end>.
+    /phours <player> [start [end]]: Shows the percent of online time between <start> and <end> by hour.
 
 Upcoming Commands:
 
-    /ah <player> online <date/time> [within <minutes>] - checks records if player was online during the period specified; the within param defaults to the survey closest to the time specified
-    /ah <player> online between <date/time> <date/time> - checks records if player was online during the period specified
-    /ah <grouppercent|grppcnt|gp> at <time> since <date> - returns the average distribution of permissions groups online at the time of day specified
-    /ah <grouppercent|grppcnt|gp> at <time> between <date> <date> - returns the average distribution of permissions groups online at the time of day specified
-    /ah clean before <date/time> - erases data before the time specified
+    /online <player> <date/time> ["within" minutes] - checks records if player was online during the period specified; the within param defaults to the survey interval
+    /online <player> "between" <date/time> <date/time> - checks records if player was online during the period specified
+    /gpercent <group> [start [end]] ["at" hour]: Shows the percent of online time between <start> and <end>. Restrict the search to a certain time using <hour>.
+    /staffdist [start [end]] - Shows the average percent of players that are staff during each hour of the day.
+    /ahclean <date/time> - erases data from before the time specified
+    /ahdump <date/time> - saves data from before the time specified to a flat file and removes it from the database
+    /ahbackup <date/time> - saves data from before the time specified to a flat file without deleting it from the database
+    /ahrestore <date/time> - adds data from before the time specified from flat files to the database
 
 Notes:
 
-    params in <> are required, params in [] are optional
+    params in <> are required, params in [] are optional, params in "" should be typed word for word
     <time> uses format hh:mm:ss, <date> uses format MM.DD.YY, <date/time> uses format MM.DD.YY-hh:mm:ss, <hour> is an integer from 0 to 23.
-    grouppercent commands require Vault
+    Example timestamps: 1/1/00-0:30:00, 3/24-5:10, 5/12-4, 3-18:20
+    Group queries require Vault
 
 Permissions:
 
