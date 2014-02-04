@@ -23,7 +23,7 @@ public class TimeRange{
      * @param e The end Date
      */
     public TimeRange(Date s, Date e){
-    	if(e.after(s)){
+    	if(s!=null && e!=null && e.after(s)){
     		start = s;
     		end = e;
     	}else{
