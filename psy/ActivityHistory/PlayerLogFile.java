@@ -74,7 +74,7 @@ public class PlayerLogFile{
     
     /**Adds a session to the file
      * @param time The time of the survey
-     * @param len The survey interval
+     * @param len The survey interval or session length
      */
     public void addSession(long time, int len) throws IOException{
         BufferedWriter bw = writer(true);
@@ -122,6 +122,7 @@ public class PlayerLogFile{
         if(hour == -1)
         	percent = (double)time/range.lengthInMinutes();
         else
+            //Compensate for only 1 hour a day being searched
         	percent = 24.0*time/range.lengthInMinutes();
         percent *= 100;
         percent = Math.round(percent);

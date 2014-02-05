@@ -87,7 +87,7 @@ public class DatabaseManager{
             return ontime + " minutes";
         }catch(Exception e){
         }
-        return 0;
+        return "0 minutes";
     }
     
     public double tallyActivityPercent(TimeRange range, int hour, String playername){
@@ -141,14 +141,14 @@ public class DatabaseManager{
                     try{
                         Statement stmt = con.createStatement();
                         String sql = "INSERT INTO Players (PlayerName, Start, End) VALUES (";
-                        sql += player.getName() + new Date(start) + ", " + new Date(end) + ")";
+                        sql += player.getName() + "," + new Date(start) + ", " + new Date(end) + ")";
                         stmt.executeUpdate(sql);
                     }catch(Exception e){
                         logger.log(Level.WARNING, ActivityHistory.messages.getString("errors.dbUpdate"));
                     }
                 }
             }
-            if(false && ActivityHistory.vaultEnabled && plugin.accessConfig().getBoolean("groups.enabled")){
+            if(ActivityHistory.vaultEnabled && plugin.accessConfig().getBoolean("groups.enabled")){
                 String[] groups = ActivityHistory.perms.getGroups();
                 for(String group : groups)
                     demogrphx.put(group, 0);
@@ -163,7 +163,7 @@ public class DatabaseManager{
                     for(String group : groups){
                         Statement stmt = con.createStatement();
                         String sql = "INSERT INTO Groups (SurveyTime, SurveyInterval, GroupName, GroupCount) VALUES (";
-                        sql += new Timestamp(time) + ", " + plugin.accessConfig().getInt("general.surveyInterval") + ", ";
+                        sql += new Date(start) + ", " + plugin.accessConfig().getInt("general.surveyInterval") + ", ";
                         sql += group + ", " + demogrphx.get(group) + ")";
                         stmt.executeUpdate(sql);
                     }

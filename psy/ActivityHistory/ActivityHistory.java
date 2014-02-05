@@ -85,7 +85,7 @@ public class ActivityHistory extends JavaPlugin{
             
         if(vaultEnabled)
             setupPermissions();
-        if(config.getBoolean("groups.enabled") || config.getBoolean("players.enabled"))
+        if(config.getBoolean("players.enabled") || (vaultEnabled && config.getBoolean("groups.enabled")))
             scheduleSurvey();
             
         if(vaultEnabled && config.getBoolean("groups.enabled"))
@@ -119,7 +119,7 @@ public class ActivityHistory extends JavaPlugin{
         Date time = new Date();
         int minute = time.getMinutes();
         int offset = 0;
-        int interval = accessConfig().getInt("general.surveyInterval");
+        int interval = config.getInt("general.surveyInterval");
         //Set initial delay to the amount of time until the time is divisible by interval
         do{
             minute++;

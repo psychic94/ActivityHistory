@@ -21,7 +21,6 @@ public class GroupLogFile{
         this(new File(pathname));
     }
     
-    @SuppressWarnings("unchecked")
     public GroupLogFile(File file){
         try{
             file.createNewFile();
@@ -172,7 +171,7 @@ public class GroupLogFile{
         }
     }
     
-    @SuppressWarnings("deprecation")
+    @Deprecated
     private boolean matchesConditions(Date date, Date start, Date end, int hour){
         if(!date.before(end))
             return false;
