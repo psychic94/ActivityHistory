@@ -12,9 +12,8 @@ import java.util.HashMap;
 import psy.util.TimeRange;
 
 public class GroupLogFile{
-    private HashMap<Date, Integer> sessions;
+    private HashMap<Date, Integer> surveys;
     private HashMap<Date, HashMap<String, Integer>> demogrphx;
-    private Date firstSession;
     private File file;
     
     public GroupLogFile(String pathname){
@@ -26,14 +25,13 @@ public class GroupLogFile{
             file.createNewFile();
         }catch(Exception e){
         }
-        sessions = new HashMap<Date, Integer>();
-        firstSession = null;
-        loadSessions();
-        firstSession = getFirstSession();
+        surveys = new HashMap<Date, Integer>();
+        demogrphx = new HashMap<Date, HashMap<String, Integer>>();
+        loadSurveys();
     }
     
     //Returns true if loading successful, false if an error was caught
-    private boolean loadSessions(){
+    private boolean loadSurveys(){
         BufferedReader br = reader();
         while(true){
             String line = new String();
@@ -65,14 +63,14 @@ public class GroupLogFile{
             demogrphx.put(date, temp);
         }
         //Save any changes made when fixing invalid data
-        return saveSessions();
+        return saveSurveys();
     }
     
     //Returns true if saving was successful, false if an error was caught
-    private boolean saveSessions(){
+    private boolean saveSurveys(){
         BufferedWriter bw = writer(false);
-        for(Date key : sessions.keySet()){
-            String line = key.getTime() + ":" + sessions.get(key) + ": ";
+        for(Date key : surveys.keySet()){
+            String line = key.getTime() + ":" + surveys.get(key) + ": ";
             HashMap<String, Integer> temp = demogrphx.get(key);
             for(String key2 : temp.keySet()){
                 line += temp.get(key2) + " " + key2 + ", ";
@@ -101,7 +99,7 @@ public class GroupLogFile{
     }
     
     //Returns true if addition was successful, false if an error was caught
-    public boolean addSession(long time, int len, HashMap<String, Integer> map){
+    public boolean addSurvey(long time, int len, HashMap<String, Integer> map){
         BufferedWriter bw = writer(true);
         String line = "" + time + ":" + len + ": ";
         for(String key : map.keySet()){
