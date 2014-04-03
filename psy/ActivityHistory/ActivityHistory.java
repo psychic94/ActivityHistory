@@ -33,7 +33,7 @@ public class ActivityHistory extends JavaPlugin{
     /**
      * The plugin configuration.
      */
-    public FileConfiguration config;
+    private FileConfiguration config;
     /**
      * Stores whether Vault was detected when enabling.
      */
