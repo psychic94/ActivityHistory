@@ -6,7 +6,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
@@ -58,6 +57,7 @@ public class DatabaseManager{
         Statement stmnt = con.createStatement();
         stmnt.executeUpdate(
             "CREATE TABLE Groups(EntryID int NOT NULL AUTO_INCREMENT, SurveyTime timestamp NOT NULL, "
+        	+ "Varchar(25) GroupName NOT NULL, int GroupCount NOT NULL,"
             + "PRIMARY KEY (EntryID))"
         );
     }
@@ -126,6 +126,17 @@ public class DatabaseManager{
         return 0;
     }
     
+    public void addPlayerSession(String playername, TimeRange session) throws SQLException{
+    	addPlayerSession(playername, session.getStart(), session.getEnd());
+    }
+    
+    public void addPlayerSession(String playername, Date start, Date end) throws SQLException{
+        Statement stmt = con.createStatement();
+        String sql = "INSERT INTO Players (PlayerName, Start, End) VALUES (";
+        sql += playername + "," + start + ", " + end + ")";
+        stmt.executeUpdate(sql);
+    }
+    
     public SQLSurveyer getSurveyer(){
         return surveyer;
     }
@@ -139,10 +150,7 @@ public class DatabaseManager{
             if(plugin.accessConfig().getBoolean("players.enabled")){
                 for(Player player : players){
                     try{
-                        Statement stmt = con.createStatement();
-                        String sql = "INSERT INTO Players (PlayerName, Start, End) VALUES (";
-                        sql += player.getName() + "," + new Date(start) + ", " + new Date(end) + ")";
-                        stmt.executeUpdate(sql);
+                        addPlayerSession(player.getName(), new Date(start), new Date(end));
                     }catch(Exception e){
                         logger.log(Level.WARNING, ActivityHistory.messages.getString("errors.dbUpdate"));
                     }

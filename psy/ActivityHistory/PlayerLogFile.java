@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -38,6 +39,7 @@ public class PlayerLogFile{
         firstSession = getFirstSession();
     }
     
+    //Returns true if loading successful, false if an error was caught
     private void loadSessions() throws FileNotFoundException, IOException{
         BufferedReader br = new BufferedReader(new FileReader(file));
         while(true){
@@ -91,6 +93,16 @@ public class PlayerLogFile{
             if(range.includes(date))
                 sessions.remove(date);
         saveSessions();
+    }
+    
+    public ArrayList<TimeRange> getSessions(TimeRange range){
+    	ArrayList<TimeRange> matches = new ArrayList<TimeRange>();
+    	for(Date date : sessions.keySet()){
+    		if(range.includes(date)){
+    			matches.add(new TimeRange(date, sessions.get(date)));
+    		}
+    	}
+    	return matches;
     }
     
     public String tallyActivityTotal(TimeRange range){
