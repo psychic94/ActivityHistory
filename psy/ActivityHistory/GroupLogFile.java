@@ -15,12 +15,15 @@ public class GroupLogFile{
     private HashMap<Date, Integer> surveys;
     private HashMap<Date, HashMap<String, Integer>> demogrphx;
     private File file;
+    private ActivityHistory plugin;
+    private Date firstSurvey;
     
-    public GroupLogFile(String pathname){
-        this(new File(pathname));
+    public GroupLogFile(String pathname, ActivityHistory plugin){
+        this(new File(pathname), plugin);
+        
     }
     
-    public GroupLogFile(File file){
+    public GroupLogFile(File file, ActivityHistory plugin){
         try{
             file.createNewFile();
         }catch(Exception e){
@@ -28,6 +31,8 @@ public class GroupLogFile{
         surveys = new HashMap<Date, Integer>();
         demogrphx = new HashMap<Date, HashMap<String, Integer>>();
         loadSurveys();
+        firstSurvey=getFirstSurvey();
+        this.plugin = plugin;
     }
     
     //Returns true if loading successful, false if an error was caught
@@ -59,7 +64,7 @@ public class GroupLogFile{
                 String[] temp2 = datum.trim().split(" ");
                 temp.put(temp2[1], new Integer(temp2[0]));
             }
-            sessions.put(date, len);
+            surveys.put(date, len);
             demogrphx.put(date, temp);
         }
         //Save any changes made when fixing invalid data
@@ -73,6 +78,7 @@ public class GroupLogFile{
             String line = key.getTime() + ":" + surveys.get(key) + ": ";
             HashMap<String, Integer> temp = demogrphx.get(key);
             for(String key2 : temp.keySet()){
+            	if(plugin.accessConfig().getBoolean("groups.cancelLogWhenEmpty") && temp.get(key2)==0)
                 line += temp.get(key2) + " " + key2 + ", ";
             }
             try{
@@ -92,7 +98,6 @@ public class GroupLogFile{
         try{
             bw.close();
         }catch(Exception e){
-            e.printStackTrace();
             return false;
         }
         return true;
@@ -116,11 +121,11 @@ public class GroupLogFile{
     }
     
     public String tallyActivityTotal(TimeRange range){
-        if(range.getStart() == null) range.setStart(firstSession);
+        if(range.getStart() == null) range.setStart(firstSurvey);
         int time = 0;
-        for(Date date : sessions.keySet()){
-            if(range.includes(date) || range.getStart().equals(firstSession))
-                time+=sessions.get(date);
+        for(Date date : surveys.keySet()){
+            if(range.includes(date) || range.getStart().equals(firstSurvey))
+                time+=surveys.get(date);
         }
         if(time == -1 || range.getStart() == null) return "There is no record of that player.";
         int hours = time / 60, minutes = time % 60;
@@ -129,11 +134,11 @@ public class GroupLogFile{
     
     @SuppressWarnings("deprecation")
     public double tallyActivityPercent(TimeRange range, int hour){
-        if(range.getStart() == null) range.setStart(firstSession);
+        if(range.getStart() == null) range.setStart(firstSurvey);
         int time = 0;
-        for(Date date : sessions.keySet()){
-            if((range.includes(date) || range.getStart().equals(firstSession)) && (hour == -1 || date.getHours() == hour))
-                time+=sessions.get(date);
+        for(Date date : surveys.keySet()){
+            if((range.includes(date) || range.getStart().equals(firstSurvey)) && (hour == -1 || date.getHours() == hour))
+                time+=surveys.get(date);
         }
         if(time == -1 || range.getStart() == null) return -1;
         long startLong = new Long(range.getStart().getTime());
@@ -169,20 +174,9 @@ public class GroupLogFile{
         }
     }
     
-    @Deprecated
-    private boolean matchesConditions(Date date, Date start, Date end, int hour){
-        if(!date.before(end))
-            return false;
-        if(start != null && !date.after(start) && !date.equals(start))
-            return false;
-        if(hour != -1 && date.getHours() != hour)
-            return false;
-        return true;
-    }
-    
-    private Date getFirstSession(){
+    private Date getFirstSurvey(){
         Date first = new Date();
-        for(Date date : sessions.keySet())
+        for(Date date : surveys.keySet())
             if(date.before(first))
                 first = date;
         return first;
