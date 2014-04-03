@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import psy.ActivityHistory.ActivityHistory;
@@ -34,10 +33,6 @@ public class FileGQCE extends GroupQueryCommandExecutor{
             return true;
         }
             
-        Player player = null;
-        if(sender instanceof Player)
-            player = (Player) sender;
-            
         String mode = cmd.getName();
         TimeRange range = null;
         if(mode.equalsIgnoreCase("gpercent")){
@@ -59,7 +54,7 @@ public class FileGQCE extends GroupQueryCommandExecutor{
 
     private GroupLogFile loadLogFile()throws IOException{
         String filename = plugin.accessConfig().getString("general.logFilesLocation") + "/groups.log";
-        GroupLogFile file = new GroupLogFile(filename);
+        GroupLogFile file = new GroupLogFile(filename, plugin);
         return file;
     }
 }

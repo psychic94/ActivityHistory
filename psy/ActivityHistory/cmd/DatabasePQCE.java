@@ -2,7 +2,6 @@ package psy.ActivityHistory.cmd;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import psy.ActivityHistory.ActivityHistory;
@@ -16,10 +15,6 @@ public class DatabasePQCE extends PlayerQueryCommandExecutor{
         if(args.length < 1){
             return false;
         }
-            
-        Player player = null;
-        if(sender instanceof Player)
-            player = (Player) sender;
         
         //Analyze command
         String mode = cmd.getName();
