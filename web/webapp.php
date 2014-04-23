@@ -12,9 +12,11 @@
 		<input type="submit" value="Query" />
 	</form></br>
 	<?php
-		#####Fill in database information here#####
-        $link = mysql_connect('address', 'username', 'password');
-		mysql_select_db('database', $link);
+		//Import configuration
+		include 'config.php';
+		
+		$link = mysql_connect($address, $username, $password);
+		mysql_select_db($database, $link);
 		
 		//Select the specified player's sessions, then make sure there's at least 1 session
 		$query = "SELECT * FROM Players WHERE PlayerName = $_GET[player] AS Sessions";
