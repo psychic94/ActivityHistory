@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<script type="text/javascript" src="graphDrawer.js"> </script>
+		<title>Activity History Web Grapher</title>
 	</head>
 	<body><form>
 		Username: <input type="text" maxlength="15" name="player" required /><br />
