@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script type="text/javascript" src="graphDrawer.js" />
+		<script type="text/javascript" src="graphDrawer.js"> </script>
 	</head>
 	<body><form>
 		Username: <input type="text" maxlength="15" name="player" required /><br />
@@ -10,7 +10,7 @@
 			<tr><td>End:</td><td><input type="text" name="end" placeholder="YYYY-MM-DD hh:mm:ss" maxlength="19" size="25" /></td></tr>
 		</table>
 		<input type="submit" value="Query" />
-	</form>
+	</form></br>
 	<?php
 		#####Fill in database information here#####
         $link = mysql_connect('address', 'username', 'password');
@@ -95,11 +95,15 @@
 			$hourly[$hour] += mysql_query($query);
 		}
 		
+		for($hour=0; $hour<24; $hour++){
+			$hourly /= $endDate - $startDate;
+		}
+		
 		//Create and print result string
 		$temp = "Total: ".$total." hours(".(100.0*$total)/($endDate-$startDate)."%)<br />";
 		echo $temp;
 		//Create and draw result graph
-		echo "<div name=\"graph\"></div>";
 		drawGraph($hourly);
 	?>
+	<canvas id="graph" height="400" width="1000">No graph yet</canvas>
 </body></html>
