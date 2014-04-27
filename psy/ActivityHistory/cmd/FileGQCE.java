@@ -23,13 +23,19 @@ public class FileGQCE extends GroupQueryCommandExecutor{
         }
         
         GroupLogFile file = null;
+        String debugMode = plugin.accessConfig().getString("general.debugMode");
+		
         try{
             file = loadLogFile();
         }catch(FileNotFoundException e){
             sender.sendMessage(ActivityHistory.messages.getString("errors.fileNotFound"));
+            if(debugMode.equalsIgnoreCase("advanced"))
+                e.printStackTrace();
             return true;
         }catch(IOException e){
             sender.sendMessage(ActivityHistory.messages.getString("errors.fileLoad"));
+            if(debugMode.equalsIgnoreCase("advanced"))
+                e.printStackTrace();
             return true;
         }
             
