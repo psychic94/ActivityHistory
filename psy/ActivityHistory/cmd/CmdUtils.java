@@ -11,7 +11,7 @@ import psy.util.TimeRange;
  * Handles methods needed by multiple CommandExecutors.
  */
 public class CmdUtils{
-    /**Iterprets the arguments from the command to determine the range to search
+    /**Interprets the arguments from the command to determine the range to search
      * An argument index offset is given because different CommandExecutors have different argument lists
      * @param offset The number of arguments to skip
     */
@@ -21,8 +21,8 @@ public class CmdUtils{
         
         if(args.length <= (0+offset)){
         }
-        // args: <start>
-        else if(args.length == (1+offset)){
+        // args: <start> or <start> at <hour>
+        else if(args.length == (1+offset) || args.length == (3+offset)){
             try{
                 start = timeStringToDate(args[0+offset]);
             }catch(Exception e){
@@ -30,8 +30,8 @@ public class CmdUtils{
                 return null;
             }
         }
-        // args: <start> <end>
-        else if(args.length == (2+offset)){
+        // args: <start> <end> or <start> <end> at <hour>
+        else if(args.length == (2+offset) || args.length == (4+offset)){
             try{
                 start = timeStringToDate(args[0+offset]);
             }catch(Exception e){
@@ -52,7 +52,7 @@ public class CmdUtils{
     }
     
     
-    /**Iterprets the arguments from the command to determine the time of day to search
+    /**Interprets the arguments from the command to determine the time of day to search
      * An argument index offset is given because different CommandExecutors have different argument lists
      * @param offset The number of arguments to skip
     */
@@ -80,7 +80,7 @@ public class CmdUtils{
         }
     }
     
-    /**Translates the format used in the command arguements into java.util.Date
+    /**Translates the format used in the command arguments into java.util.Date
      * @param str The string to be translated
     */
     @SuppressWarnings("deprecation")
