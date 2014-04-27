@@ -114,7 +114,7 @@ public class PlayerLogFile{
         }
         if(time == -1 || range.getStart() == null) return ActivityHistory.messages.getString("errors.playerNotFound");
         int hours = time / 60, minutes = time % 60;
-        return "" + hours + "hours" + minutes + "minutes";
+        return "" + hours + " hours, " + minutes + " minutes";
     }
     
     @SuppressWarnings("deprecation")
