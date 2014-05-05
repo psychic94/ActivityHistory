@@ -93,7 +93,12 @@ public class CmdUtils{
             String[] date = str2[0].split("/");
             if(date.length >= 1) month = new Integer(date[0]) - 1;
             if(date.length >= 2) day = new Integer(date[1]);
-            if(date.length >= 3) year = new Integer(date[2]) + 100;
+            if(date.length >= 3){
+            	//Idiot proofing
+            	if(date[2].length()==2)
+            		date[2]=date[2].substring(2);
+            	year = new Integer(date[2]) + 100;
+            }
         }
         if(!str2[1].trim().equals("")){
             String[] time = str2[1].split(":");
