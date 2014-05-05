@@ -78,7 +78,7 @@ public class ActivityHistory extends JavaPlugin{
                 }catch(SQLException e){
                     logger.log(Level.SEVERE, messages.getString("errors.dbConnect"));
                     dbm = null;
-                    playerExec = new DisabledPQCE(this);
+                    playerExec = new DisabledPQCE(this, e);
                 }
         }else
             playerExec = new DisabledPQCE(this);
