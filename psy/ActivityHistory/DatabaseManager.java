@@ -86,7 +86,9 @@ public class DatabaseManager{
             //Calculate activity percent to two decimal places
             return ontime + " minutes";
         }catch(Exception e){
-            if(ah.accessConfig().getString("general.logMode").equalsIgnoreCase("advanced")
+            if(plugin.accessConfig().getString("general.logMode").equalsIgnoreCase("basic"))
+            	logger.log(Level.WARNING, e.getMessage());
+            else if(plugin.accessConfig().getString("general.logMode").equalsIgnoreCase("advanced"))
                 e.printStackTrace();
         }
         return "0 minutes";
@@ -124,7 +126,9 @@ public class DatabaseManager{
             }
             return percent;
         }catch(Exception e){
-            if(ah.accessConfig().getString("general.logMode").equalsIgnoreCase("advanced")
+        	if(plugin.accessConfig().getString("general.logMode").equalsIgnoreCase("basic"))
+            	logger.log(Level.WARNING, e.getMessage());
+        	else if(plugin.accessConfig().getString("general.logMode").equalsIgnoreCase("advanced"))
                 e.printStackTrace();
         }
         return 0;

@@ -2,6 +2,8 @@ package psy.ActivityHistory.cmd;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -13,6 +15,8 @@ import psy.util.TimeRange;
 
 public class FileGQCE extends GroupQueryCommandExecutor{
     private ActivityHistory plugin;
+    private static final Logger logger = Logger.getLogger("Minecraft");
+    
     public FileGQCE(Plugin pl){
         plugin = (ActivityHistory) pl;
     }
@@ -29,12 +33,16 @@ public class FileGQCE extends GroupQueryCommandExecutor{
             file = loadLogFile();
         }catch(FileNotFoundException e){
             sender.sendMessage(ActivityHistory.messages.getString("errors.fileNotFound"));
-            if(debugMode.equalsIgnoreCase("advanced"))
+            if(debugMode.equalsIgnoreCase("basic"))
+            	logger.log(Level.WARNING, e.getMessage());
+            else if(debugMode.equalsIgnoreCase("advanced"))
                 e.printStackTrace();
             return true;
         }catch(IOException e){
             sender.sendMessage(ActivityHistory.messages.getString("errors.fileLoad"));
-            if(debugMode.equalsIgnoreCase("advanced"))
+            if(debugMode.equalsIgnoreCase("basic"))
+            	logger.log(Level.WARNING, e.getMessage());
+            else if(debugMode.equalsIgnoreCase("advanced"))
                 e.printStackTrace();
             return true;
         }
