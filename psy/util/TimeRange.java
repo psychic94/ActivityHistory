@@ -172,11 +172,11 @@ public class TimeRange{
     }
     
     /**
-     * Calculates the number of milliseconds in this TimeRange are also in a supplied second TimeRange
+     * Calculates the number of seconds in this TimeRange are also in a supplied second TimeRange
      * @param other The TimeRange to compare
      * @return
      */
-    public long overlap(TimeRange other){
+    public double overlap(TimeRange other){
     	//If the other TimeRange is completely before this one, return 0
         if(other.getEnd()!=null && this.start!=null && other.getEnd().before(this.start))
         	return 0;
@@ -187,23 +187,27 @@ public class TimeRange{
         else{
         	Date overlapStart, overlapEnd;
         	//... find the start of the overlap
-        	if(other.getStart()==null || other.getStart().before(this.start)){
+        	if(other.getStart()==null && this.start==null){
+        		overlapStart = null;
+        	}else if(other.getStart().before(this.start)){
         		overlapStart = this.start;
         	}else{
         		overlapStart = other.getStart();
         	}
         	//... and the end of the overlap
-        	if(other.getEnd()==null || other.getEnd().before(this.end)){
-        		overlapEnd = other.getEnd();
+        	if(other.getEnd()==null && this.end==null){
+        		overlapEnd = null;
+        	}else if(other.getEnd().before(this.end)){
+        	    overlapEnd = other.getEnd();
         	}else{
         		overlapEnd = this.end;
         	}
         	//If either end of the overlap is unbounded, return infinity
-        	if(this.start==null || this.end==null)
-        		return (long)Double.POSITIVE_INFINITY;
+        	if(overlapStart==null || overlapEnd==null)
+        		return Double.POSITIVE_INFINITY;
         	//Otherwise subtract the bounds
         	else
-        		return (overlapEnd.getTime() - overlapStart.getTime());
+        		return (overlapEnd.getTime() - overlapStart.getTime())/1000.0;
         }
     }
     
