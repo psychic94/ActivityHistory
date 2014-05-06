@@ -80,7 +80,7 @@ public class DatabaseManager{
             result.beforeFirst();
             while(result.next()){
             	TimeRange temp = new TimeRange(result.getDate(3), result.getDate(4));
-            	ontime += range.overlap(temp);
+            	ontime += range.overlap(temp).lengthInMinutes();
             }
             
             //Calculate activity percent to two decimal places
@@ -112,11 +112,11 @@ public class DatabaseManager{
             result.beforeFirst();
             while(result.next()){
             	TimeRange temp = new TimeRange(result.getDate(3), result.getDate(4));
-            	ontime += range.overlap(temp);
+            	ontime += range.overlap(temp).lengthInMinutes();
             }
             
             //Calculate activity percent to two decimal places
-            double percent = ontime/range.length();
+            double percent = ontime/range.lengthInMinutes();
             percent *= 100;
             percent = Math.round(percent);
             percent /= 100;

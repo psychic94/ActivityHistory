@@ -9,12 +9,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 import psy.util.TimeRange;
 
 public class PlayerLogFile{
-    private HashMap<Date, Integer> sessions;
+    private ArrayList<TimeRange> sessions;
     private Date firstSession;
     private File file;
     
@@ -33,7 +32,7 @@ public class PlayerLogFile{
     public PlayerLogFile(File initFile) throws FileNotFoundException, IOException{
         file = initFile;
         file.createNewFile();
-        sessions = new HashMap<Date, Integer>();
+        sessions = new ArrayList<TimeRange>();
         firstSession = null;
         loadSessions();
         firstSession = getFirstSession();
@@ -57,7 +56,7 @@ public class PlayerLogFile{
             }catch(NumberFormatException e){
                 continue;
             }
-            sessions.put(date, len);
+            sessions.add(new TimeRange(date, len*60000));
         }
         br.close();
         //Save any changes made when fixing invalid data
@@ -66,8 +65,8 @@ public class PlayerLogFile{
     
     private void saveSessions() throws IOException{
         BufferedWriter bw = writer(false);
-        for(Date key : sessions.keySet()){
-            bw.write(key.getTime() + ":" + sessions.get(key));
+        for(TimeRange session : sessions){
+            bw.write(session.getStart().getTime() + ":" + session.lengthInMinutes());
             bw.newLine();
         }
         bw.flush();
@@ -79,7 +78,8 @@ public class PlayerLogFile{
      * @param len The survey interval or session length
      */
     public void addSession(long time, int len) throws IOException{
-        BufferedWriter bw = writer(true);
+        sessions.add(new TimeRange(new Date(time), len*60000));
+    	BufferedWriter bw = writer(true);
         bw.write("" + time + ":" + len);
         bw.newLine();
         bw.flush();
@@ -89,28 +89,31 @@ public class PlayerLogFile{
      * @param range Delete sessions from within this range
      */
     public void removeSessions(TimeRange range) throws IOException{
-        for(Date date : sessions.keySet())
-            if(range.includes(date))
-                sessions.remove(date);
+    	ArrayList<TimeRange> matches = getSessions(range);
+    	for(TimeRange match : matches){
+    		sessions.remove(match);
+    	}
         saveSessions();
     }
     
     public ArrayList<TimeRange> getSessions(TimeRange range){
     	ArrayList<TimeRange> matches = new ArrayList<TimeRange>();
-    	for(Date date : sessions.keySet()){
-    		if(range.includes(date)){
-    			matches.add(new TimeRange(date, sessions.get(date)));
-    		}
-    	}
+    	for(TimeRange session : sessions){
+          	TimeRange overlap = range.overlap(session);
+          	if(overlap!=null){
+          		matches.add(overlap);
+          	}
+          }
     	return matches;
     }
     
     public String tallyActivityTotal(TimeRange range){
         if(range.getStart() == null) range.setStart(firstSession);
         int time = 0;
-        for(Date date : sessions.keySet()){
-            if(range.includes(date))
-                time+=sessions.get(date);
+    	for(TimeRange session : sessions){
+          	TimeRange overlap = range.overlap(session);
+          	if(overlap!=null)
+                time+=overlap.lengthInMinutes();
         }
         if(time == -1 || range.getStart() == null) return ActivityHistory.messages.getString("errors.playerNotFound");
         int hours = time / 60, minutes = time % 60;
@@ -120,19 +123,20 @@ public class PlayerLogFile{
     @SuppressWarnings("deprecation")
     public double tallyActivityPercent(TimeRange range, int hour){
         if(range.getStart() == null) range.setStart(firstSession);
-        //If the above line didnt work, set the start to when this plugin was first published
-        if(range.getStart() == null) range.setStart(new Date(112, 8, 17));
-        int time = 0;
-        for(Date date : sessions.keySet()){
-            if(range.includes(date) && (hour == -1 || date.getHours() == hour))
-                time+=sessions.get(date);
+        double time = 0;
+        for(TimeRange session : sessions){
+            if(hour == -1 || session.getStart().getHours() == hour){
+              	TimeRange overlap = range.overlap(session);
+              	if(overlap!=null)
+                    time+=overlap.lengthInMinutes();
+            }
         }
         if(time == 0) return -1;
         
         //Calculate activity percent to two decimal places
         double percent;
         if(hour == -1)
-        	percent = (double)time/range.lengthInMinutes();
+        	percent = time/range.lengthInMinutes();
         else
             //Compensate for only 1 hour a day being searched
         	percent = 24.0*time/range.lengthInMinutes();
@@ -149,7 +153,7 @@ public class PlayerLogFile{
     private Date getFirstSession(){
         Date first = new Date();
         Date[] dates = new Date[sessions.size()];
-        sessions.keySet().toArray(dates);
+        dates = sessions.toArray(dates);
         for(int i=0; i<dates.length; i++){
             if(dates[i].before(first))
                 first = dates[i];

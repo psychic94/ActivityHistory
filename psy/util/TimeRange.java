@@ -176,13 +176,13 @@ public class TimeRange{
      * @param other The TimeRange to compare
      * @return
      */
-    public double overlap(TimeRange other){
+    public TimeRange overlap(TimeRange other){
     	//If the other TimeRange is completely before this one, return 0
         if(other.getEnd()!=null && this.start!=null && other.getEnd().before(this.start))
-        	return 0;
+        	return null;
         //If the other TimeRange is completely after this one, return 0
         else if(other.getStart()!=null && this.end!=null && other.getStart().after(this.end))
-        	return 0;
+        	return null;
         //If the TimeRanges do overlap
         else{
         	Date overlapStart, overlapEnd;
@@ -202,12 +202,7 @@ public class TimeRange{
         	}else{
         		overlapEnd = this.end;
         	}
-        	//If either end of the overlap is unbounded, return infinity
-        	if(overlapStart==null || overlapEnd==null)
-        		return Double.POSITIVE_INFINITY;
-        	//Otherwise subtract the bounds
-        	else
-        		return (overlapEnd.getTime() - overlapStart.getTime())/1000.0;
+        	return new TimeRange(overlapStart, overlapEnd);
         }
     }
     
