@@ -152,11 +152,11 @@ public class PlayerLogFile{
     
     private Date getFirstSession(){
         Date first = new Date();
-        Date[] dates = new Date[sessions.size()];
+        TimeRange[] dates = new TimeRange[sessions.size()];
         dates = sessions.toArray(dates);
         for(int i=0; i<dates.length; i++){
-            if(dates[i].before(first))
-                first = dates[i];
+            if(dates[i].getStart().before(first))
+                first = dates[i].getStart();
         }
         return first;
     }
