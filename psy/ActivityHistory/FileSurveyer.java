@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -14,8 +16,12 @@ import org.bukkit.plugin.Plugin;
  */
 public class FileSurveyer implements Runnable{
     ActivityHistory plugin;
+    private Logger logger = Logger.getLogger("Minecraft");
+    String debugMode;
+    
     public FileSurveyer(Plugin pl){
         plugin = (ActivityHistory) pl;
+        debugMode = plugin.accessConfig().getString("general.debugMode");
     }
     
     public void run(){
@@ -30,17 +36,33 @@ public class FileSurveyer implements Runnable{
                     PlayerLogFile log = new PlayerLogFile(filename);
                     log.addSession(time, plugin.accessConfig().getInt("general.surveyInterval"));
                 }catch(Exception e){
+                	if(debugMode.equalsIgnoreCase("basic")){
+                		String message = ActivityHistory.messages.getString("errors.playerUpdate");
+                		message = message.replaceAll("%p", player.getName());
+                    	logger.log(Level.WARNING, message);
+                	}else if(debugMode.equalsIgnoreCase("advanced"))
+                        e.printStackTrace();
                 }
             }
         }
-        if(ActivityHistory.vaultEnabled && plugin.accessConfig().getBoolean("groups.enabled") && ActivityHistory.vaultEnabled){
+        if(ActivityHistory.vaultEnabled && plugin.accessConfig().getBoolean("groups.enabled")){
             String[] groups = ActivityHistory.perms.getGroups();
             for(String group : groups)
-                demogrphx.put(group, 0);
+                demogrphx.put(group.toLowerCase(), 0);
             //Collect data on the groups
             for(Player player : players){
-                String group = ActivityHistory.perms.getPrimaryGroup(player);
-                demogrphx.put(group, demogrphx.remove(group) + 1);
+                String group = ActivityHistory.perms.getPrimaryGroup(player).toLowerCase();
+                Integer oldCount = demogrphx.remove(group);
+                if(oldCount==null){
+                	if(debugMode.equalsIgnoreCase("basic") || debugMode.equalsIgnoreCase("advanced")){
+                		String message = ActivityHistory.messages.getString("errors.playerUpdate");
+                		message = message.replaceAll("%p", player.getName());
+                		message = message.replaceAll("%g", group);
+                		logger.log(Level.WARNING, message);
+                	}
+                	continue;
+                }
+                demogrphx.put(group, oldCount + 1);
             }
             //Write the data
             try{
